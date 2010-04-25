@@ -96,9 +96,16 @@ public:
 int temptipo, tempdir;
 
 typedef struct {
+	int lsup;
+	int linf;
+	int m;
+} tablaArr;
+
+typedef struct {
 	wchar_t* name;
 	int tipo;
 	int dirV;
+	list<tablaArr> dim;
 } tablaVars;
 
 typedef struct {
