@@ -279,7 +279,7 @@ printCuadruplos();
 
 //funcion = (funcU | funcE).
 //funcU = (funcV| funcT).
-variables = "var" ( vares | varns ) "endv" ';'.
+variables = "var" ( vares | varns {varns} ) "endv" ';'.
 
 tipo<int &type> 
 = 
@@ -297,116 +297,128 @@ llamadas = '(' (  funcE  | llamadaFuncU ) ')' .
 
 
 
-
-index = '[' exp ']' {  '[' exp ']'  }.
 vares = ( vector | matriz ).
 
 varns = (. wchar_t* name;int type; .)  tipo<type> declaracion.
 
-declaracion = (. wchar_t* name;int type; .)  Ident<name> [index] [asignacion] ';' 
-(. 
+declaracion = (. wchar_t* name;int type; .)  Ident<name> (. 
 
-switch(numproc){
-case 0:
-if( st.checaTablaVars(numproc, type, name) ){
-	switch(type) {
-		case 0:
-			MemGlobal.mint = st.newTablaVar(numproc, type, name, MemGlobal.mint);
-		break;
-		case 1:
-			MemGlobal.mfloat = st.newTablaVar(numproc, type, name, MemGlobal.mfloat);
-		break;
-		case 2:
-			MemGlobal.mstring = st.newTablaVar(numproc, type, name, MemGlobal.mstring);
-		break;
-		case 3:
-			MemGlobal.mboolean = st.newTablaVar(numproc, type, name, MemGlobal.mboolean);
-		break;
-		case 4:
-			MemGlobal.mcomplex = st.newTablaVar(numproc, type, name, MemGlobal.mcomplex);
-		break;
-		default:
-			MemGlobal.mint = st.newTablaVar(numproc, type, name, MemGlobal.mint);
+	switch(numproc){
+	case 0:
+	if( st.checaTablaVars(numproc, type, name) ){
+		switch(type) {
+			case 0:
+				MemGlobal.mint = st.newTablaVar(numproc, type, name, MemGlobal.mint);
+			break;
+			case 1:
+				MemGlobal.mfloat = st.newTablaVar(numproc, type, name, MemGlobal.mfloat);
+			break;
+			case 2:
+				MemGlobal.mstring = st.newTablaVar(numproc, type, name, MemGlobal.mstring);
+			break;
+			case 3:
+				MemGlobal.mboolean = st.newTablaVar(numproc, type, name, MemGlobal.mboolean);
+			break;
+			case 4:
+				MemGlobal.mcomplex = st.newTablaVar(numproc, type, name, MemGlobal.mcomplex);
+			break;
+			default:
+				MemGlobal.mint = st.newTablaVar(numproc, type, name, MemGlobal.mint);
+		}
 	}
-}
-break;
-default:
+	break;
+	default:
 
-if( st.checaTablaVars(numproc, type, name) ){
-	switch(type) {
-		case 0:
-			MemLoc.mint = st.newTablaVar(numproc, type, name, MemLoc.mint);
-		break;
-		case 1:
-			MemLoc.mfloat = st.newTablaVar(numproc, type, name, MemLoc.mfloat);
-		break;
-		case 2:
-			MemLoc.mstring = st.newTablaVar(numproc, type, name, MemLoc.mstring);
-		break;
-		case 3:
-			MemLoc.mboolean = st.newTablaVar(numproc, type, name, MemLoc.mboolean);
-		break;
-		case 4:
-			MemLoc.mcomplex = st.newTablaVar(numproc, type, name, MemLoc.mcomplex);
-		break;
-		default:
-			MemLoc.mint = st.newTablaVar(numproc, type, name, MemLoc.mint);
+	if( st.checaTablaVars(numproc, type, name) ){
+		switch(type) {
+			case 0:
+				MemLoc.mint = st.newTablaVar(numproc, type, name, MemLoc.mint);
+			break;
+			case 1:
+				MemLoc.mfloat = st.newTablaVar(numproc, type, name, MemLoc.mfloat);
+			break;
+			case 2:
+				MemLoc.mstring = st.newTablaVar(numproc, type, name, MemLoc.mstring);
+			break;
+			case 3:
+				MemLoc.mboolean = st.newTablaVar(numproc, type, name, MemLoc.mboolean);
+			break;
+			case 4:
+				MemLoc.mcomplex = st.newTablaVar(numproc, type, name, MemLoc.mcomplex);
+			break;
+			default:
+				MemLoc.mint = st.newTablaVar(numproc, type, name, MemLoc.mint);
+		}
 	}
-}
 
-}
-.). 
+	}
+.)  [index] [asignacion] ';'. 
+
+index = '[' exp ']' {  '[' exp ']'  }.
+
+eqOp<int &op> = (. op = -1; .) '=' (. op = equ;.) .
+
+asignacion = (.int op;.) eqOp<op> (.
+	POperadores.push(op);
+.) exp (.
+	if ( !POperadores.empty() ) {
+		if ( POperadores.top() == op){
+			buildCruadruple2(op);
+		}
+	}
+.) ';'.
+
+
+
+
+
+
+
+
+
+
 
 funcion = (. wchar_t* name;int type; .)  "def" (funcV | funcT).
 
-funcV = (. wchar_t* name;int type; .) "void" (. tipo_proc=-1 ; .) Ident<name> 
-(.
-if( st.checaDirProc(numproc, tipo_proc, name) ){
-	st.insertaDirProc(numproc, tipo_proc, name,  MemLoc.mint, cont_cuadruple);
-}
-.)
-'('[parametros]')' bloque 
-(.
-numproc = numproc+1;
-.).
-
-funcT = (. wchar_t* name;int type; .)  tipo<type> (. tipo_proc = type; .) Ident<name> 
-(.
-
-if( st.checaDirProc(numproc, tipo_proc, name) ){
-	switch(type){
-		case 0:
-		MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint, cont_cuadruple);
-		break;
-		case 1:
-		MemLoc.mfloat = st.newDirProc(numproc, tipo_proc, name, MemLoc.mfloat, cont_cuadruple);
-		break;
-		case 2:
-		MemLoc.mstring = st.newDirProc(numproc, tipo_proc, name, MemLoc.mstring, cont_cuadruple);
-		break;
-		case 3:
-		MemLoc.mboolean = st.newDirProc(numproc, tipo_proc, name, MemLoc.mboolean, cont_cuadruple);
-		break;
-		case 4:
-		MemLoc.mcomplex = st.newDirProc(numproc, tipo_proc, name, MemLoc.mcomplex, cont_cuadruple);
-		break;
-		default:
-		MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint, cont_cuadruple);
+funcV = (. wchar_t* name;int type; .) "void" (. tipo_proc=-1 ; .) Ident<name>  (.
+	if( st.checaDirProc(numproc, tipo_proc, name) ){
+		st.insertaDirProc(numproc, tipo_proc, name,  MemLoc.mint, cont_cuadruple);
 	}
-}
 .)
-'(' [parametros]')' bloque
-(.
-numproc = numproc+1;
+'('[parametros]')' bloque (.
+	numproc = numproc+1;
+.).
+
+funcT = (. wchar_t* name;int type; .)  tipo<type> (. tipo_proc = type; .) Ident<name>  (.
+
+	if( st.checaDirProc(numproc, tipo_proc, name) ){
+		switch(type){
+			case 0:
+			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint, cont_cuadruple);
+			break;
+			case 1:
+			MemLoc.mfloat = st.newDirProc(numproc, tipo_proc, name, MemLoc.mfloat, cont_cuadruple);
+			break;
+			case 2:
+			MemLoc.mstring = st.newDirProc(numproc, tipo_proc, name, MemLoc.mstring, cont_cuadruple);
+			break;
+			case 3:
+			MemLoc.mboolean = st.newDirProc(numproc, tipo_proc, name, MemLoc.mboolean, cont_cuadruple);
+			break;
+			case 4:
+			MemLoc.mcomplex = st.newDirProc(numproc, tipo_proc, name, MemLoc.mcomplex, cont_cuadruple);
+			break;
+			default:
+			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint, cont_cuadruple);
+		}
+	}
+.)
+'(' [parametros]')' bloque (.
+	numproc = numproc+1;
 .).
 
 
-
-
-
-parametros = (. wchar_t* name; int type; .)  
-tipo<type> Ident<name> 
-(. 
+parametros = (. wchar_t* name; int type; .)  tipo<type> Ident<name> (. 
 
 switch(numproc){
 case 0:
@@ -636,33 +648,14 @@ mulOp<int &op> =
 '/' (. op = slash; .) ). 
 
 
-
-
-
-eqOp<int &op> = (. op = -1; .) '=' (. op = equ;.) .
-
-asignacion = (.int op;.) eqOp<op>
-(.
-POperadores.push(op);
-.)
-exp
-(.
-if ( !POperadores.empty() ) {
-	if ( POperadores.top() == op){
-		buildCruadruple2(op);
-	}
-} .) ';'.
-
-factor = (. wchar_t* name; .)  ( Ident<name>
-(.
-
-diract = st.buscaVariable(numproc, name);
-//cout << " tu dir es " << diract << endl;
-POperandos.push(diract);
-PTipos.push(st.temptipo);
+factor = (. wchar_t* name; .)  ( Ident<name> (.
+	diract = st.buscaVariable(numproc, name);
+	//cout << " tu dir es " << diract << endl;
+	POperandos.push(diract);
+	PTipos.push(st.temptipo);
 
 .)
- [ ( index  | llamadaFuncU  ) ] | llamadaFuncE  | var_cte  | '(' expresion ')'  ).
+[ ( index  | llamadaFuncU  ) ] | llamadaFuncE  | var_cte  | '(' expresion ')'  ).
 
 
 ciclo = ciclofor | ciclowhile.
