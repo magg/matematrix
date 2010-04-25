@@ -277,8 +277,8 @@ printCuadruplos();
 .).
 
 
-funcion = (funcU | funcE).
-funcU = (funcV| funcT).
+//funcion = (funcU | funcE).
+//funcU = (funcV| funcT).
 variables = "var" ( vares | varns ) "endv" ';'.
 
 tipo<int &type> 
