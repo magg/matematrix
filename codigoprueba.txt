@@ -6,6 +6,23 @@ int g = 4;
 int x = 6;
 endv;
 
+
+
+def void funcion(int c) { 		
+var 
+int d=2;
+endv;	
+
+}
+
+def void funcion1(int n) { 		
+var 
+int k=0;
+endv;	
+
+k = a - x;
+}
+
 /*	
 
 //var 
@@ -18,20 +35,6 @@ def funcion(int c) { 				//Checar en diagramas si se puede asignar al momento de
 	}
 }
 
-def funcion(int c) { 		
-var 
-int d=2;
-endv;	
-
-}
-
-def funcion1(int n) { 		
-var 
-int k=0;
-endv;	
-
-k = a - x;
-}
 def operacion(){
 	matrix int dos[5,3] = ([1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15]);
 	matrix int res[5,3] = sum_m(uno + dos);
