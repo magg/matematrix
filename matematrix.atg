@@ -279,7 +279,7 @@ printCuadruplos();
 
 //funcion = (funcU | funcE).
 //funcU = (funcV| funcT).
-variables = "var" ( vares | varns {varns} ) "endv" ';'.
+
 
 tipo<int &type> 
 = 
@@ -296,12 +296,9 @@ estatuto = ( condicion | escritura | lectura | ciclo | llamadas | assign).
 llamadas = '(' (  funcE  | llamadaFuncU ) ')' .
 
 
-
+variables = "var" ( vares | varns {varns} ) "endv" ';'.
 vares = ( vector | matriz ).
-
-varns = (. wchar_t* name;int type; .)  tipo<type> declaracion.
-
-declaracion = (. wchar_t* name;int type; .)  Ident<name> (. 
+varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (. 
 
 	switch(numproc){
 	case 0:
@@ -352,7 +349,7 @@ declaracion = (. wchar_t* name;int type; .)  Ident<name> (.
 	}
 
 	}
-.)  [index] [asignacion] ';'. 
+.)  [index] ( [asignacion] | ';'). 
 
 index = '[' exp ']' {  '[' exp ']'  }.
 
@@ -363,7 +360,7 @@ asignacion = (.int op;.) eqOp<op> (.
 .) exp (.
 	if ( !POperadores.empty() ) {
 		if ( POperadores.top() == op){
-			buildCruadruple2(op);
+			//buildCruadruple2(op);
 		}
 	}
 .) ';'.
