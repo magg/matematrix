@@ -97,57 +97,57 @@ return t;
 }
 
 int buildCruadruple(int op){
-int uno, dos, id1, id2, res, temp;
+	int uno, dos, id1, id2, res, temp;
 
-uno = PTipos.top();
-PTipos.pop();
-dos = PTipos.top();
-PTipos.pop();
+	uno = PTipos.top();
+	PTipos.pop();
+	dos = PTipos.top();
+	PTipos.pop();
 
-if( semantico(uno, dos, op) != 5 ) {
-id2 = POperandos.top();
-POperandos.pop();
-id1 = POperandos.top();
-POperandos.pop();
-res = semantico(uno, dos, op);
-	switch(res) {
-		case 0:
-			temp = MemTemp.mint;
-			MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, res);
-		break;
-		case 1:
-			temp = MemTemp.mfloat;
-			MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, res);
-		break;
-		case 2:
-			temp = MemTemp.mstring;
-			MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, res);
-		break;
-		case 3:
-			temp = MemTemp.mboolean;
-			MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, res);
-		break;
-		case 4:
-			temp = MemTemp.mcomplex;
-			MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, res);
-		break;
-		default:
-			cout << "Type mismatch" << endl;
+	if( semantico(uno, dos, op) != 5 ) {
+	id2 = POperandos.top();
+	POperandos.pop();
+	id1 = POperandos.top();
+	POperandos.pop();
+	res = semantico(uno, dos, op);
+		switch(res) {
+			case 0:
+				temp = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, res);
+			break;
+			case 1:
+				temp = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, res);
+			break;
+			case 2:
+				temp = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, res);
+			break;
+			case 3:
+				temp = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, res);
+			break;
+			case 4:
+				temp = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, res);
+			break;
+			default:
+				cout << "Type mismatch" << endl;
+		}
+	cont_cuadruple++;
+
+	cuadruplos x;
+	x.op = op;
+	x.opdo1 = id1;
+	x.opdo2 = id2;
+	x.res = temp;
+	hasht[cont_cuadruple] = x;
+	POperandos.push(temp);
+	PTipos.push(res);
+	} else {
+		cout << "Semantic error: Type mismatch" << endl;
+
 	}
-cont_cuadruple++;
-
-cuadruplos x;
-x.op = op;
-x.opdo1 = id1;
-x.opdo2 = id2;
-x.res = temp;
-hasht[cont_cuadruple] = x;
-POperandos.push(temp);
-PTipos.push(res);
-} else {
-	cout << "Semantic error: Type mismatch" << endl;
-
-}
 return 0;
 }
 
