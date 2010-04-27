@@ -309,7 +309,63 @@ funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
 variables = "var" ( vares | varns ) { ( vares | varns ) } "end".
 vares = ( vector | matriz ).
-matriz = (. wchar_t* name;int type; .)  "matrix" tipo<type> Ident<name> '['expresion ',' expresion ']' '=' '(' '[' expresion { ',' expresion } ']' { ',' '[' expresion { ',' expresion } ']' } ')' ';'.
+matriz = (. wchar_t* name;int type; .)  "matrix" tipo<type> Ident<name> '['expresion ',' expresion ']' (.
+/*
+switch(numproc){
+	case 0:
+	if( st.checaTablaVars(numproc, type, name) ){
+		switch(type) {
+			case 0:
+				MemGlobal.mint = st.newTablaVarArr(numproc, type, name, MemGlobal.mint);
+			break;
+			case 1:
+				MemGlobal.mfloat = st.newTablaVarArr(numproc, type, name, MemGlobal.mfloat);
+			break;
+			case 2:
+				MemGlobal.mstring = st.newTablaVarArr(numproc, type, name, MemGlobal.mstring);
+			break;
+			case 3:
+				MemGlobal.mboolean = st.newTablaVarArr(numproc, type, name, MemGlobal.mboolean);
+			break;
+			case 4:
+				MemGlobal.mcomplex = st.newTablaVarArr(numproc, type, name, MemGlobal.mcomplex);
+			break;
+			default:
+				MemGlobal.mint = st.newTablaVarArr(numproc, type, name, MemGlobal.mint);
+		}
+	}
+	break;
+	default:
+
+	if( st.checaTablaVars(numproc, type, name) ){
+		switch(type) {
+			case 0:
+				MemLoc.mint = st.newTablaVarArr(numproc, type, name, MemLoc.mint);
+			break;
+			case 1:
+				MemLoc.mfloat = st.newTablaVarArr(numproc, type, name, MemLoc.mfloat);
+			break;
+			case 2:
+				MemLoc.mstring = st.newTablaVarArr(numproc, type, name, MemLoc.mstring);
+			break;
+			case 3:
+				MemLoc.mboolean = st.newTablaVarArr(numproc, type, name, MemLoc.mboolean);
+			break;
+			case 4:
+				MemLoc.mcomplex = st.newTablaVarArr(numproc, type, name, MemLoc.mcomplex);
+			break;
+			default:
+				MemLoc.mint = st.newTablaVarArr(numproc, type, name, MemLoc.mint);
+		}
+	}
+
+	}
+
+
+
+*/
+.) '=' '(' '[' expresion { ',' expresion } ']' { ',' '[' expresion { ',' expresion } ']' } ')' ';'.
+
 vector = (. wchar_t* name;int type; .)  "vector" tipo<type> Ident<name> '=' '{' expresion ',' expresion ',' expresion '}' ';'.
 varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (. 
 
