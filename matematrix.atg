@@ -306,9 +306,9 @@ var_cte (.
 
 bloque = '{' [ estatuto { estatuto } ] '}'.
 index = '[' exp ']' {  '[' exp ']'  }.
-estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables ).
+estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | assign ).
 //llamadas = '(' (  funciones  | otras ) ')' .
-//assign = (. wchar_t* name; .)  Ident<name> [ index ] asignacion.
+assign = (. wchar_t* name; .)  Ident<name> [ index ] asignacion.
 //otras = Ident<name> [index] ( asignacion | aesp ).
 //aesp = ("++" | "--" | "+=" expresion | "-=" expresion ).
 //llamadaFuncU = (. wchar_t* name; .)  Ident<name> '(' exp { ',' exp } ')' ';'.	
@@ -316,7 +316,7 @@ funciones = '(' ( funcN | funcE ) ')' ';'.
 funcN = (. wchar_t* name; .)  Ident<name> '(' expresion { ',' expresion } ')'. 
 funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
-variables = "var" ( vares | varns {varns} ) "endv" ';'.
+variables = "var" ( vares | varns {varns}) "end".
 vares = ( vector | matriz ).
 varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (. 
 
@@ -369,7 +369,7 @@ varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (.
 	}
 
 	}
-.)  [index] ( [asignacion] | ';'). 
+.)  ['=' exp1] ';'. //[index] ( [asignacion] | ';'). 
 
 
 eqOp<int &op> = (. op = -1; .) '=' (. op = equ;.) .
@@ -379,7 +379,7 @@ asignacion = (.int op;.) eqOp<op> (.
 .) exp (.
 	if ( !POperadores.empty() ) {
 		if ( POperadores.top() == op){
-			//buildCruadruple2(op);
+			buildCruadruple2(op);
 		}
 	}
 .) ';'.
@@ -387,7 +387,7 @@ asignacion = (.int op;.) eqOp<op> (.
 expresion = (.int op; .) exp (.
 	if ( !POperadores.empty() ) {
 		if ( POperadores.top() == andop || POperadores.top() == orop) {
-			//buildCruadruple(POperadores.top());
+			buildCruadruple(POperadores.top());
 		}
 	} 
 .)
