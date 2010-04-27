@@ -445,11 +445,7 @@ expresion = (.int op; .) exp (.
 .)
 exp }.
 
-boolOp<int &op> =  
-(. op = -1; .)
-( "and"  (. op = andop; .)  | 
-"or"  (. op = orop; .) ). 
-
+boolOp<int &op> = (. op = -1; .) ( "and"  (. op = andop; .)  | "or"  (. op = orop; .) ). 
 
 exp = (.int op; .)  exp1 [ relOp<op> (.
 	POperadores.push(op);
@@ -462,8 +458,7 @@ exp = (.int op; .)  exp1 [ relOp<op> (.
 	} 
 .) ].
 
-relOp<int &op> = 
-(. op = -1; .)
+relOp<int &op> = (. op = -1; .)
 ( '>' (. op = gtr; .) | 
 '<' (. op = lss; .) | 
 "<>" (. op = diff; .) | 
@@ -482,10 +477,7 @@ exp1 = (.int op;.) termino
 	POperadores.push(op);
 .) termino}.
 
-addOp<int &op> =
-(. op = -1; .) 
-( '+' (. op = plus; .) | 
-'-' (. op = minus; .)). 
+addOp<int &op> = (. op = -1; .) ( '+' (. op = plus; .) | '-' (. op = minus; .)). 
 
 termino = (.int op;.)  factor (.
 	if ( !POperadores.empty() ) {
@@ -497,11 +489,7 @@ termino = (.int op;.)  factor (.
 	POperadores.push(op);
 .) factor }.	
 
-mulOp<int &op> = 
-(. op = -1; .)
-( '*' (. op = times; .) | 
-'/' (. op = slash; .) 
-). 
+mulOp<int &op> = (. op = -1; .) ( '*' (. op = times; .) | '/' (. op = slash; .) ). 
 
 factor = (. wchar_t* name; .)  ( Ident<name> (.
 	diract = st.buscaVariable(numproc, name);
