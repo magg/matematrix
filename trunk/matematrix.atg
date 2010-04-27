@@ -489,7 +489,7 @@ mulOp<int &op> = (. op = -1; .) ( '*' (. op = times; .) | '/' (. op = slash; .) 
 
 factor = (. wchar_t* name; .)  ( Ident<name> (.
 	diract = st.buscaVariable(numproc, name);
-	cout << " tu dir es " << diract << endl;
+	cout << " tu dir es " << diract <<endl;
 	POperandos.push(diract);
 	PTipos.push(st.temptipo);
 
