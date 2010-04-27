@@ -316,7 +316,7 @@ funciones = '(' ( funcN | funcE ) ')' ';'.
 funcN = (. wchar_t* name; .)  Ident<name> '(' expresion { ',' expresion } ')'. 
 funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
-variables = "var" ( vares {vares} | varns {varns} ) "endv" ';'.
+variables = "var" ( vares | varns {varns} ) "endv" ';'.
 vares = ( vector | matriz ).
 varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (. 
 
