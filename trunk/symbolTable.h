@@ -294,7 +294,7 @@ int buscaVariable(int a, wchar_t* name){
 			//wcout << name << endl;
 			cout << "entro 1er if" << endl;
 			for (p=hmap[a].vars.begin(); p!=hmap[a].vars.end(); p++) {	
-				cout << "entro 1er for" << endl;
+				//cout << "entro 1er for" << endl;
 				if ( wcscmp(p->name, name) == 0 ) {
 					cout << "entro al if dentro del for 1" << endl;
 					temptipo = p->tipo;
@@ -302,11 +302,11 @@ int buscaVariable(int a, wchar_t* name){
 					b = true;					
 				}  
 			}
-		} else if ( !b && a!=0 ) {
+		} else if ( b == false && a!=0 ) {
 		cout << "entro al 1er elsif" << endl;
 			list<tablaParam>::iterator q;
 			for (q=hmap[a].param.begin(); q!=hmap[a].param.end(); q++) {	
-				cout << "entro 2ndo for" << endl;
+				//cout << "entro 2ndo for" << endl;
 				if ( wcscmp(p->name, name) == 0 ) {
 					cout << "entro al if dentro del for 2" << endl;
 					temptipo = q->tipo;
@@ -314,10 +314,10 @@ int buscaVariable(int a, wchar_t* name){
 					b = true;					
 				}  
 			}
-		} else if (!b) {
+		} else if ( b == false ) {
 		cout << "entro al 2ndo elsif" << endl;
 			for (p=hmap[0].vars.begin(); p!=hmap[0].vars.end(); p++) {
-				cout << "entro 3er for" << endl;	
+				//cout << "entro 3er for" << endl;	
 				if ( wcscmp(p->name, name) == 0 ) {
 					cout << "entro al if dentro del for 3" << endl;
 					temptipo = p->tipo;

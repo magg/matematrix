@@ -99,9 +99,9 @@ return t;
 int buildCruadruple(int op){
 	int uno, dos, id1, id2, res, temp;
 
-	uno = PTipos.top();
-	PTipos.pop();
 	dos = PTipos.top();
+	PTipos.pop();
+	uno = PTipos.top();
 	PTipos.pop();
 
 	if( semantico(uno, dos, op) != 5 ) {
@@ -449,8 +449,7 @@ boolOp<int &op> = (. op = -1; .) ( "and"  (. op = andop; .)  | "or"  (. op = oro
 
 exp = (.int op; .)  exp1 [ relOp<op> (.
 	POperadores.push(op);
-.) exp1 
-(.
+.) exp1 (.
 	if ( !POperadores.empty() ) {
 		if ( POperadores.top() == op) {
 			buildCruadruple(POperadores.top());
@@ -466,16 +465,13 @@ relOp<int &op> = (. op = -1; .)
 "<=" (. op = lsseq; .) | 
 ">="  (. op = gtreq; .) ). 
 
-exp1 = (.int op;.) termino 
-(.
+exp1 = (.int op;.) termino (.
 	if ( !POperadores.empty() ) {
 		if ( POperadores.top() == plus || POperadores.top() == minus) {
 			buildCruadruple(POperadores.top());
 		}
-} .) { addOp<op>
-(.
-	POperadores.push(op);
-.) termino}.
+	} .) { addOp<op> (.POperadores.push(op); .) 
+termino }.
 
 addOp<int &op> = (. op = -1; .) ( '+' (. op = plus; .) | '-' (. op = minus; .)). 
 
@@ -493,12 +489,18 @@ mulOp<int &op> = (. op = -1; .) ( '*' (. op = times; .) | '/' (. op = slash; .) 
 
 factor = (. wchar_t* name; .)  ( Ident<name> (.
 	diract = st.buscaVariable(numproc, name);
-	//cout << " tu dir es " << diract << endl;
+	cout << " tu dir es " << diract << endl;
 	POperandos.push(diract);
 	PTipos.push(st.temptipo);
 
 .)
-[ ( index  | '(' expresion ')' ) ] | llamadaFuncE  | var_cte | '(' expresion ')' ).
+[ ( index  | '(' expresion ')' ) ] | llamadaFuncE  | var_cte | '(' (. POperadores.push(-9999); .) exp')' (. 
+	if( POperadores.top() == -9999) {
+		POperadores.pop(); 
+	} else {
+	cout << "error" << endl;
+	}
+.) ).
 
 
 
