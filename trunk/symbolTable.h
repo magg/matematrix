@@ -286,50 +286,44 @@ return b;
 
 
 int buscaVariable(int a, wchar_t* name){
-	//if(hmap.find(a) != hmap.end()) {
-		list<tablaVars>::iterator p;
-		bool b = false;
-		if (a != 0) {
-			//cout << a << endl;
-			//wcout << name << endl;
-			cout << "entro 1er if" << endl;
-			for (p=hmap[a].vars.begin(); p!=hmap[a].vars.end(); p++) {	
-				//cout << "entro 1er for" << endl;
-				if ( wcscmp(p->name, name) == 0 ) {
-					cout << "entro al if dentro del for 1" << endl;
-					temptipo = p->tipo;
-					tempdir = p->dirV;
-					b = true;					
-				}  
-			}
-		} else if ( b == false && a!=0 ) {
-		cout << "entro al 1er elsif" << endl;
-			list<tablaParam>::iterator q;
+int b = 0;	
+	list<tablaVars>::iterator p;
+	for (p=hmap[a].vars.begin(); p!=hmap[a].vars.end(); p++) {	
+		if ( wcscmp(p->name, name) == 0 ) {
+			b = 1;
+			temptipo = p->tipo;
+			tempdir = p->dirV;
+		} 
+	}
+
+if (b == 0){
+	list<tablaParam>::iterator q;
 			for (q=hmap[a].param.begin(); q!=hmap[a].param.end(); q++) {	
 				//cout << "entro 2ndo for" << endl;
 				if ( wcscmp(p->name, name) == 0 ) {
 					cout << "entro al if dentro del for 2" << endl;
 					temptipo = q->tipo;
 					tempdir = q->dirV;
-					b = true;					
+					b = 1;					
 				}  
+
 			}
-		} else if ( b == false ) {
-		cout << "entro al 2ndo elsif" << endl;
-			for (p=hmap[0].vars.begin(); p!=hmap[0].vars.end(); p++) {
+}
+if (b == 0){
+
+	for (p=hmap[0].vars.begin(); p!=hmap[0].vars.end(); p++) {
 				//cout << "entro 3er for" << endl;	
 				if ( wcscmp(p->name, name) == 0 ) {
 					cout << "entro al if dentro del for 3" << endl;
 					temptipo = p->tipo;
 					tempdir = p->dirV;					
 				} 
-			}
-		}
-	//}
-	return tempdir;
+	}
+
 }
 
-
+	return tempdir;
+}
 
 void printLista(){
 	list<tablaVars>::iterator p;
