@@ -289,13 +289,33 @@ tipo<int &type>
 "string" (. type = stringg; .) | 
 "complex" (. type = complexi; .) ).
 
-estatuto = ( condicion | escritura | lectura | ciclo | llamadas | assign).
 
+var_cte (.
+	int n1;
+	float m1;
+	int b1;
+	wchar_t *s1;
+.) = ( 
+	number (. swscanf(t->val, L"%d", &n1); .)  | 
+	flotante (. swscanf(t->val, L"%f", &m1); .) | 
+	"true" (. b1=1; .) |
+	"false" (. b1=0; .) |
+	string (. s1 = coco_string_create(t->val); .)  | 
+	imaginario 
+).
 
-
-llamadas = '(' (  funcE  | llamadaFuncU ) ')' .
-
-
+bloque = '{' [ estatuto { estatuto } ] '}'.
+index = '[' exp ']' {  '[' exp ']'  }.
+estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables ).
+//llamadas = '(' (  funciones  | otras ) ')' .
+//assign = (. wchar_t* name; .)  Ident<name> [ index ] asignacion.
+//otras = Ident<name> [index] ( asignacion | aesp ).
+//aesp = ("++" | "--" | "+=" expresion | "-=" expresion ).
+//llamadaFuncU = (. wchar_t* name; .)  Ident<name> '(' exp { ',' exp } ')' ';'.	
+funciones = '(' ( funcN | funcE ) ')' ';'.
+funcN = (. wchar_t* name; .)  Ident<name> '(' expresion { ',' expresion } ')'. 
+funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
+llamadaFuncE = (fTrigonom | log).
 variables = "var" ( vares | varns {varns} ) "endv" ';'.
 vares = ( vector | matriz ).
 varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (. 
@@ -351,7 +371,6 @@ varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (.
 	}
 .)  [index] ( [asignacion] | ';'). 
 
-index = '[' exp ']' {  '[' exp ']'  }.
 
 eqOp<int &op> = (. op = -1; .) '=' (. op = equ;.) .
 
@@ -365,12 +384,84 @@ asignacion = (.int op;.) eqOp<op> (.
 	}
 .) ';'.
 
+expresion = (.int op; .) exp (.
+	if ( !POperadores.empty() ) {
+		if ( POperadores.top() == andop || POperadores.top() == orop) {
+			buildCruadruple(POperadores.top());
+		}
+	} 
+.)
+{ boolOp<op> (.
+	POperadores.push(op);
+.)
+exp }.
+
+boolOp<int &op> =  
+(. op = -1; .)
+( "and"  (. op = andop; .)  | 
+"or"  (. op = orop; .) ). 
 
 
+exp = (.int op; .)  exp1 [ relOp<op> (.
+	POperadores.push(op);
+.) exp1 
+(.
+	if ( !POperadores.empty() ) {
+		if ( POperadores.top() == op) {
+			buildCruadruple(POperadores.top());
+		}
+	} 
+.) ].
 
+relOp<int &op> = 
+(. op = -1; .)
+( '>' (. op = gtr; .) | 
+'<' (. op = lss; .) | 
+"<>" (. op = diff; .) | 
+"==" (. op = eqeq; .) | 
+"<=" (. op = lsseq; .) | 
+">="  (. op = gtreq; .) ). 
 
+exp1 = (.int op;.) termino 
+(.
+	if ( !POperadores.empty() ) {
+		if ( POperadores.top() == plus || POperadores.top() == minus) {
+			buildCruadruple(POperadores.top());
+		}
+} .) { addOp<op>
+(.
+	POperadores.push(op);
+.) termino}.
 
+addOp<int &op> =
+(. op = -1; .) 
+( '+' (. op = plus; .) | 
+'-' (. op = minus; .)). 
 
+termino = (.int op;.)  factor (.
+	if ( !POperadores.empty() ) {
+		if ( POperadores.top() == slash || POperadores.top() == times) {
+			buildCruadruple(POperadores.top());
+		}
+	} 
+.) { mulOp<op> (.
+	POperadores.push(op);
+.) factor }.	
+
+mulOp<int &op> = 
+(. op = -1; .)
+( '*' (. op = times; .) | 
+'/' (. op = slash; .) 
+). 
+
+factor = (. wchar_t* name; .)  ( Ident<name> (.
+	diract = st.buscaVariable(numproc, name);
+	//cout << " tu dir es " << diract << endl;
+	POperandos.push(diract);
+	PTipos.push(st.temptipo);
+
+.)
+[ ( index  | '(' expresion ')' ) ] | llamadaFuncE  | var_cte | '(' expresion ')' ).
 
 
 
@@ -536,126 +627,11 @@ if( st.checaTablaParam(numproc, type, name) ){
 
 
 
-funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
-llamadaFuncE = (fTrigonom | log).
-llamadaFuncU = (. wchar_t* name; .)  Ident<name> '(' exp { ',' exp } ')' ';'.	
-bloque = '{'  [variables{variables}]  [ estatuto { estatuto } ] '}'.
-assign = (. wchar_t* name; .)  Ident<name> [ index ] asignacion.
-var_cte
-(.
-int n1;
-float m1;
-int b1;
-wchar_t *s1;
-.)
- = ( 
-number (. swscanf(t->val, L"%d", &n1); .)  | 
-flotante (. swscanf(t->val, L"%f", &m1); .) | 
-"true" (. b1=1; .) |
-"false" (. b1=0; .) |
-string (. s1 = coco_string_create(t->val); .)  | 
-imaginario ).
 
 
 
 
-
-
-expresion = (.int op; .) exp 
-(.
-if ( !POperadores.empty() ) {
-	if ( POperadores.top() == andop || POperadores.top() == orop) {
-		buildCruadruple(POperadores.top());
-	}
-} .){ boolOp<op>
-(.
-POperadores.push(op);
-.)
-exp }.
-
-boolOp<int &op> =  
-(. op = -1; .)
-( "and"  (. op = andop; .)  | 
-"or"  (. op = orop; .) ). 
-
-
-
-
-
-exp = (.int op; .)  exp1 [ relOp<op> 
-(.
-POperadores.push(op);
-.) exp1 
-(.
-if ( !POperadores.empty() ) {
-	if ( POperadores.top() == op) {
-		buildCruadruple(POperadores.top());
-	}
-} 
-.) ].
-
-relOp<int &op> = 
-(. op = -1; .)
-( '>' (. op = gtr; .) | 
-'<' (. op = lss; .) | 
-"<>" (. op = diff; .) | 
-"==" (. op = eqeq; .) | 
-"<=" (. op = lsseq; .) | 
-">="  (. op = gtreq; .) ). 
-
-
-
-
-
-exp1 = (.int op;.) termino 
-(.
-if ( !POperadores.empty() ) {
-	if ( POperadores.top() == plus || POperadores.top() == minus) {
-		buildCruadruple(POperadores.top());
-	}
-} .) { addOp<op>
-(.
-POperadores.push(op);
-.) termino}.
-
-addOp<int &op> =
-(. op = -1; .) 
-( '+' (. op = plus; .) | 
-'-' (. op = minus; .)). 
-
-
-
-
-
-termino = (.int op;.)  factor
-(.
-if ( !POperadores.empty() ) {
-	if ( POperadores.top() == slash || POperadores.top() == times) {
-		buildCruadruple(POperadores.top());
-	}
-} 
-.) { mulOp<op>
-(.
-POperadores.push(op);
-.)factor }.	
-
-mulOp<int &op> = 
-(. op = -1; .)
-( '*' (. op = times; .) | 
-'/' (. op = slash; .) ). 
-
-
-factor = (. wchar_t* name; .)  ( Ident<name> (.
-	diract = st.buscaVariable(numproc, name);
-	//cout << " tu dir es " << diract << endl;
-	POperandos.push(diract);
-	PTipos.push(st.temptipo);
-
-.)
-[ ( index  | llamadaFuncU  ) ] | llamadaFuncE  | var_cte  | '(' expresion ')'  ).
-
-
-ciclo = ciclofor | ciclowhile.
+ciclo = (ciclofor | ciclowhile).
 condicion = "if" '(' expresion ')' bloque [ "elif" expresion bloque { "elif" expresion bloque } ] [ "else" bloque ].
 ciclowhile = "while" '(' termino ')' bloque.
 ciclofor = (. wchar_t* name; .)  "for" '(' Ident<name> asignacion expresion ';' Ident<name> ( '-''-' | '+''+' ) ')' bloque.
