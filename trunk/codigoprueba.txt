@@ -4,6 +4,7 @@ int a;
 float b;
 int g = 4;
 int x = 6;
+matrix int uno[5,3] = ([1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15]);
 end
 
 
@@ -25,7 +26,7 @@ k = a + x;
 /*	
 
 	//var 
-	//matrix int uno[5,3] = ([1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15]);
+	//
 
 	def funcion(int c) { 				//Checar en diagramas si se puede asignar al momento de mandar el parametro
 		var int d=2;				//En los diagramas no se pueden crear las variables en la funcion 
