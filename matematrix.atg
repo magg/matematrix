@@ -309,6 +309,8 @@ funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
 variables = "var" ( vares | varns ) { ( vares | varns ) } "end".
 vares = ( vector | matriz ).
+matriz = (. wchar_t* name;int type; .)  "matrix" tipo<type> Ident<name> '['expresion ',' expresion ']' '=' '(' '[' expresion { ',' expresion } ']' { ',' '[' expresion { ',' expresion } ']' } ')' ';'.
+vector = (. wchar_t* name;int type; .)  "vector" tipo<type> Ident<name> '=' '{' expresion ',' expresion ',' expresion '}' ';'.
 varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (. 
 
 	switch(numproc){
@@ -495,14 +497,6 @@ funcT = (. wchar_t* name;int type; .)  tipo<type> (. tipo_proc = type; .) Ident<
 
 
 
-
-
-
-
-
-
-
-
 parametros = (. wchar_t* name; int type; .)  tipo<type> Ident<name> (. 
 
 switch(numproc){
@@ -634,12 +628,9 @@ ciclowhile = "while" '(' termino ')' bloque.
 ciclofor = (. wchar_t* name; .)  "for" '(' Ident<name> asignacion expresion ';' Ident<name> ( '-''-' | '+''+' ) ')' bloque.
 escritura = "print" '(' exp{',' exp} ')'.
 lectura = (. wchar_t* name; .)  "read" '(' Ident<name> [ '[' exp ']' ] ')'.
-vector = (. wchar_t* name;int type; .)  "vector" tipo<type> Ident<name> '=' '{' expresion ',' expresion ',' expresion '}' ';'.
 Sum_V = "sum_v" '(' expresion { ',' expresion } ')' ';'.
 Mul_V = "mul_v" '('  expresion { ',' expresion } ')' ';'.
 pro_ev = "pro_ev" '(' expresion ',' expresion ')' ';'.
-matriz = (. wchar_t* name;int type; .)  
-"matrix" tipo<type> Ident<name> '['expresion ',' expresion ']' '=' '(' '[' expresion { ',' expresion } ']' { ',' '[' expresion { ',' expresion } ']' } ')' ';'.
 Sum_M = (. wchar_t* name; .)  "sum_m" '(' Ident<name> '+' Ident<name> ')' ';'.
 Inv_M = "inv_m" '(' expresion ')' ';'.
 Mul_M = "mul_m" '(' expresion ',' expresion ')' ';'.
