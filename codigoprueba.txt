@@ -13,6 +13,7 @@ var
 int d=2;
 end	
 
+c = a * x;
 }
 
 def void funcion1(int n) { 		
@@ -20,7 +21,6 @@ var
 int k=0;
 end
 
-k = a + x;
 }
 
 /*	
