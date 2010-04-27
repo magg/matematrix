@@ -7,7 +7,6 @@ int x = 6;
 endv;
 
 
-
 def void funcion(int c) { 		
 var 
 int d=2;
@@ -20,13 +19,13 @@ var
 int k=0;
 endv;	
 
-k = a - x;
 }
 
 /*	
 
 //var 
 //matrix int uno[5,3] = ([1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15]);
+
 
 def funcion(int c) { 				//Checar en diagramas si se puede asignar al momento de mandar el parametro
 	var int d=2;				//En los diagramas no se pueden crear las variables en la funcion 
