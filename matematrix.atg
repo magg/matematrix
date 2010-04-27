@@ -316,7 +316,7 @@ funciones = '(' ( funcN | funcE ) ')' ';'.
 funcN = (. wchar_t* name; .)  Ident<name> '(' expresion { ',' expresion } ')'. 
 funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
-variables = "var" ( vares | varns {varns} ) "endv" ';'.
+variables = "var" ( vares {vares} | varns {varns} ) "endv" ';'.
 vares = ( vector | matriz ).
 varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (. 
 
@@ -387,7 +387,7 @@ asignacion = (.int op;.) eqOp<op> (.
 expresion = (.int op; .) exp (.
 	if ( !POperadores.empty() ) {
 		if ( POperadores.top() == andop || POperadores.top() == orop) {
-			buildCruadruple(POperadores.top());
+			//buildCruadruple(POperadores.top());
 		}
 	} 
 .)
@@ -466,15 +466,12 @@ factor = (. wchar_t* name; .)  ( Ident<name> (.
 
 
 
-funcion = (. wchar_t* name;int type; .)  "def" (funcV | funcT).
+funcion = "def" (funcV | funcT) '('[parametros]')' bloque (.numproc = numproc+1;.).
 
 funcV = (. wchar_t* name;int type; .) "void" (. tipo_proc=-1 ; .) Ident<name>  (.
 	if( st.checaDirProc(numproc, tipo_proc, name) ){
 		st.insertaDirProc(numproc, tipo_proc, name,  MemLoc.mint, cont_cuadruple);
 	}
-.)
-'('[parametros]')' bloque (.
-	numproc = numproc+1;
 .).
 
 funcT = (. wchar_t* name;int type; .)  tipo<type> (. tipo_proc = type; .) Ident<name>  (.
@@ -500,10 +497,19 @@ funcT = (. wchar_t* name;int type; .)  tipo<type> (. tipo_proc = type; .) Ident<
 			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint, cont_cuadruple);
 		}
 	}
-.)
-'(' [parametros]')' bloque (.
-	numproc = numproc+1;
+
 .).
+
+
+
+
+
+
+
+
+
+
+
 
 
 parametros = (. wchar_t* name; int type; .)  tipo<type> Ident<name> (. 
