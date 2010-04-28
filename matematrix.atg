@@ -154,9 +154,9 @@ return 0;
 
 int buildCruadruple2(int op){
 	int uno, dos, id1, id2, res;
-	uno = PTipos.top();
-	PTipos.pop();
 	dos = PTipos.top();
+	PTipos.pop();
+	uno = PTipos.top();
 	PTipos.pop();
 
 	if( semantico(uno, dos, op) != 5 ) {
@@ -299,7 +299,13 @@ bloque = '{' [ estatuto { estatuto } ] '}'.
 index = '[' exp ']' {  '[' exp ']'  }.
 estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | assign ).
 //llamadas = '(' (  funciones  | otras ) ')' .
-assign = (. wchar_t* name; .)  Ident<name> [ index ] asignacion.
+assign = (. wchar_t* name; .)  Ident<name> (.
+	diract = st.buscaVariable(numproc, name);
+	cout << " tu dir es " << diract <<endl;
+	POperandos.push(diract);
+	PTipos.push(st.temptipo);
+
+.) [ index ] asignacion.
 //otras = Ident<name> [index] ( asignacion | aesp ).
 //aesp = ("++" | "--" | "+=" expresion | "-=" expresion ).
 //llamadaFuncU = (. wchar_t* name; .)  Ident<name> '(' exp { ',' exp } ')' ';'.	

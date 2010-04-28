@@ -13,7 +13,7 @@ var
 int d=2;
 end	
 
-c = a * x;
+a = d * x;
 }
 
 def void funcion1(int n) { 		
