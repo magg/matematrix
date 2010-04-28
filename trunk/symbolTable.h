@@ -301,7 +301,7 @@ if (b == 0){
 			for (q=hmap[a].param.begin(); q!=hmap[a].param.end(); q++) {	
 				//cout << "entro 2ndo for" << endl;
 				if ( wcscmp(p->name, name) == 0 ) {
-					cout << "entro al if dentro del for 2" << endl;
+					//cout << "entro al if dentro del for 2" << endl;
 					temptipo = q->tipo;
 					tempdir = q->dirV;
 					b = 1;					
@@ -314,7 +314,7 @@ if (b == 0){
 	for (p=hmap[0].vars.begin(); p!=hmap[0].vars.end(); p++) {
 				//cout << "entro 3er for" << endl;	
 				if ( wcscmp(p->name, name) == 0 ) {
-					cout << "entro al if dentro del for 3" << endl;
+					//cout << "entro al if dentro del for 3" << endl;
 					temptipo = p->tipo;
 					tempdir = p->dirV;					
 				} 
