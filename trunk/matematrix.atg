@@ -45,7 +45,7 @@ int // opcodes
 	  GTREQ, LSSEQ, EQEQ, ANDOP, OROP, RET, PRINT, RETURN,
 	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM;
 
-int numproc, tipoactual,tipo_proc, cont_cuadruple, diract;
+int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact;
 
 stack<int> PTipos;
 stack<int> POperadores;
@@ -144,6 +144,7 @@ int buildCruadruple(int op){
 	hasht[cont_cuadruple] = x;
 	POperandos.push(temp);
 	PTipos.push(res);
+	POperadores.pop();
 	} else {
 		cout << "Semantic error: Type mismatch" << endl;
 
@@ -173,6 +174,7 @@ int buildCruadruple2(int op){
 		x.opdo2 = id2;
 		x.res = res;
 		hasht[cont_cuadruple] = x;
+		POperadores.pop();
 	} else {
 		cout << "Semantic error: Type mismatch" << endl;
 
@@ -297,15 +299,8 @@ var_cte (.
 
 bloque = '{' [ estatuto { estatuto } ] '}'.
 index = '[' exp ']' {  '[' exp ']'  }.
-estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | assign ).
+estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | asignacion ).
 //llamadas = '(' (  funciones  | otras ) ')' .
-assign = (. wchar_t* name; .)  Ident<name> (.
-	diract = st.buscaVariable(numproc, name);
-	cout << " tu dir es " << diract <<endl;
-	POperandos.push(diract);
-	PTipos.push(st.temptipo);
-
-.) [ index ] asignacion.
 //otras = Ident<name> [index] ( asignacion | aesp ).
 //aesp = ("++" | "--" | "+=" expresion | "-=" expresion ).
 //llamadaFuncU = (. wchar_t* name; .)  Ident<name> '(' exp { ',' exp } ')' ';'.	
@@ -429,12 +424,18 @@ varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (.
 
 eqOp<int &op> = (. op = -1; .) '=' (. op = equ;.) .
 
-asignacion = (.int op;.) eqOp<op> (.
+asignacion = (.int op; wchar_t* name; .)  Ident<name> (.
+	asact = st.buscaVariable(numproc, name);
+	cout << " tu as dir es " << asact <<endl;
+	POperandos.push(asact);
+	PTipos.push(st.temptipo);
+
+.) [ index ] eqOp<op> (.
 	POperadores.push(op);
-.) exp (.
+.) expresion (.
 	if ( !POperadores.empty() ) {
-		if ( POperadores.top() == op){
-			buildCruadruple2(op);
+		if ( POperadores.top() == equ){
+			buildCruadruple2(POperadores.top());
 		}
 	}
 .) ';'.
@@ -476,8 +477,13 @@ exp1 = (.int op;.) termino (.
 		if ( POperadores.top() == plus || POperadores.top() == minus) {
 			buildCruadruple(POperadores.top());
 		}
-	} .) { addOp<op> (.POperadores.push(op); .) 
-termino }.
+	} .) { addOp<op> (.cout<<"op es: " << op << endl; POperadores.push(op);.)  termino (.
+	if ( !POperadores.empty() ) {
+		if ( POperadores.top() == plus || POperadores.top() == minus) {
+			buildCruadruple(POperadores.top());
+		}
+	} .)
+}.
 
 addOp<int &op> = (. op = -1; .) ( '+' (. op = plus; .) | '-' (. op = minus; .)). 
 
@@ -489,7 +495,13 @@ termino = (.int op;.)  factor (.
 	} 
 .) { mulOp<op> (.
 	POperadores.push(op);
-.) factor }.	
+.) factor (.
+	if ( !POperadores.empty() ) {
+		if ( POperadores.top() == slash || POperadores.top() == times) {
+			buildCruadruple(POperadores.top());
+		}
+	} 
+.) }.	
 
 mulOp<int &op> = (. op = -1; .) ( '*' (. op = times; .) | '/' (. op = slash; .) ). 
 
@@ -500,7 +512,7 @@ factor = (. wchar_t* name; .)  ( Ident<name> (.
 	PTipos.push(st.temptipo);
 
 .)
-[ ( index  | '(' expresion ')' ) ] | llamadaFuncE  | var_cte | '(' (. POperadores.push(-9999); .) exp')' (. 
+[ ( index  | '(' expresion ')' ) ]| llamadaFuncE  | var_cte | '(' (. POperadores.push(-9999); .) exp')' (. 
 	if( POperadores.top() == -9999) {
 		POperadores.pop(); 
 	} else {
