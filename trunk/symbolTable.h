@@ -257,10 +257,14 @@ bool b = false;
 return b;
 }
 
-int newDirProc(int a, int type, wchar_t* nombre, int m, int c ){
+void insertaContDirProc(int a,int c){
+	hmap[a].dirI = c;
+}
+
+int newDirProc(int a, int type, wchar_t* nombre, int m){
 
 	dirProc x;
-	x.name = nombre; x.tipo = type; x.dirV = m; x.dirI = c; 
+	x.name = nombre; x.tipo = type; x.dirV = m; 
 	x.tam.vContI=0; x.tam.pContI=0; x.tam.tContI=0;
 	x.tam.vContF=0; x.tam.pContF=0; x.tam.tContF=0;
 	x.tam.vContS=0; x.tam.pContS=0; x.tam.tContS=0;
