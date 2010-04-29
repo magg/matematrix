@@ -183,6 +183,20 @@ return 0;
 }
 
 
+
+void buildCuadrupleM(int a, int b, int c, int d){
+
+	cont_cuadruple++;
+
+	cuadruplos x;
+	x.op = a;
+	x.opdo1 = b;
+	x.opdo2 = c;
+	x.res = d;
+	hasht[cont_cuadruple] = x;
+
+}
+
 void printCuadruplos() {
 
 	for(unordered_map<int, cuadruplos>::iterator it = hasht.begin(); it != hasht.end(); it ++){
@@ -261,7 +275,7 @@ PRODUCTIONS
 Ident<wchar_t* &name>= ident (. name = coco_string_create(t->val); .).
 
 matematrix = (. wchar_t* name; InitDeclarations(); .) "program" Ident<name>  (. 
-	st.insertaDirProc(numproc,0, name, MemGlobal.mint, cont_cuadruple); 
+	st.insertaDirProc(numproc,0, name, MemGlobal.mint); 
 .) ';' [variables] (.
 	numproc = numproc+1;
 .) [funcion{funcion}] "main" bloque (.
@@ -310,7 +324,7 @@ funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
 variables = "var" ( vares | varns ) { ( vares | varns ) } "end" (.
 	if (numproc != 0) {
-		insertaContDirProc(numproc, cont_cuadruple);
+		st.insertaContDirProc(numproc, cont_cuadruple);
 	}
 .).
 vares = ( vector | matriz ).
@@ -527,11 +541,14 @@ factor = (. wchar_t* name; .)  ( Ident<name> (.
 
 
 
-funcion = "def" (funcV | funcT) '('[parametros]')' bloque (.numproc = numproc+1;.).
+funcion = "def" (funcV | funcT) '('[parametros]')' bloque (.
+	buildCuadrupleM(RET,-1,-1,-1);	
+	numproc = numproc+1;
+.).
 
 funcV = (. wchar_t* name;int type; .) "void" (. tipo_proc=-1 ; .) Ident<name>  (.
 	if( st.checaDirProc(numproc, tipo_proc, name) ){
-		st.insertaDirProc(numproc, tipo_proc, name,  MemLoc.mint);
+		st.insertaDirProc(numproc, tipo_proc, name,MemLoc.mint);
 	}
 .).
 

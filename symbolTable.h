@@ -126,9 +126,9 @@ typedef struct {
 
 unordered_map<int, dirProc> hmap;
 
-void insertaDirProc(int a, int type, wchar_t* name, int m, int c){
+void insertaDirProc(int a, int type, wchar_t* name, int m){
 	dirProc x;
-	x.name = name; x.tipo = type; x.dirV = m; x.dirI = c; 	
+	x.name = name; x.tipo = type; x.dirV = m; 	
 	x.tam.vContI=0; x.tam.pContI=0; x.tam.tContI=0;
 	x.tam.vContF=0; x.tam.pContF=0; x.tam.tContF=0;
 	x.tam.vContS=0; x.tam.pContS=0; x.tam.tContS=0;
@@ -335,7 +335,7 @@ void printLista(){
 	for(unordered_map<int, dirProc>::iterator it = hmap.begin(); it != hmap.end(); it ++){
 		cout << (*it).first << " => (";
 		wcout << (*it).second.name << ", ";
-		cout << (*it).second.tipo << ", " << (*it).second.dirV << ", "; 
+		cout << (*it).second.tipo << ", " << (*it).second.dirV << ", " << (*it).second.dirI << ", ";
 		cout << /*(*it).second.tamano*/ "\n " ;
 
 		cout << (*it).second.tam.vContI << ", " << (*it).second.tam.pContI << ", " <<  (*it).second.tam.tContI <<  "\n ";
