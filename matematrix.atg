@@ -308,7 +308,11 @@ funciones = '(' ( funcN | funcE ) ')' ';'.
 funcN = (. wchar_t* name; .)  Ident<name> '(' expresion { ',' expresion } ')'. 
 funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
-variables = "var" ( vares | varns ) { ( vares | varns ) } "end".
+variables = "var" ( vares | varns ) { ( vares | varns ) } "end" (.
+	if (numproc != 0) {
+		insertaContDirProc(numproc, cont_cuadruple);
+	}
+.).
 vares = ( vector | matriz ).
 matriz = (. wchar_t* name;int type; .)  "matrix" tipo<type> Ident<name> '['expresion ',' expresion ']' (.
 /*
@@ -527,7 +531,7 @@ funcion = "def" (funcV | funcT) '('[parametros]')' bloque (.numproc = numproc+1;
 
 funcV = (. wchar_t* name;int type; .) "void" (. tipo_proc=-1 ; .) Ident<name>  (.
 	if( st.checaDirProc(numproc, tipo_proc, name) ){
-		st.insertaDirProc(numproc, tipo_proc, name,  MemLoc.mint, cont_cuadruple);
+		st.insertaDirProc(numproc, tipo_proc, name,  MemLoc.mint);
 	}
 .).
 
@@ -536,22 +540,22 @@ funcT = (. wchar_t* name;int type; .)  tipo<type> (. tipo_proc = type; .) Ident<
 	if( st.checaDirProc(numproc, tipo_proc, name) ){
 		switch(type){
 			case 0:
-			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint, cont_cuadruple);
+			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint);
 			break;
 			case 1:
-			MemLoc.mfloat = st.newDirProc(numproc, tipo_proc, name, MemLoc.mfloat, cont_cuadruple);
+			MemLoc.mfloat = st.newDirProc(numproc, tipo_proc, name, MemLoc.mfloat);
 			break;
 			case 2:
-			MemLoc.mstring = st.newDirProc(numproc, tipo_proc, name, MemLoc.mstring, cont_cuadruple);
+			MemLoc.mstring = st.newDirProc(numproc, tipo_proc, name, MemLoc.mstring);
 			break;
 			case 3:
-			MemLoc.mboolean = st.newDirProc(numproc, tipo_proc, name, MemLoc.mboolean, cont_cuadruple);
+			MemLoc.mboolean = st.newDirProc(numproc, tipo_proc, name, MemLoc.mboolean);
 			break;
 			case 4:
-			MemLoc.mcomplex = st.newDirProc(numproc, tipo_proc, name, MemLoc.mcomplex, cont_cuadruple);
+			MemLoc.mcomplex = st.newDirProc(numproc, tipo_proc, name, MemLoc.mcomplex);
 			break;
 			default:
-			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint, cont_cuadruple);
+			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint);
 		}
 	}
 
