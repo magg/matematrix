@@ -381,19 +381,31 @@ funcN = (. wchar_t* name; .)  Ident<name> (.
 	k=1;
 
 .) expresion (.
-	arg = POperandos.top();
-	POperandos.pop();
-	tipoarg = PTipos.top();
-	PTipos.pop();
+	if ( !POperandos.empty() ) {
+		arg = POperandos.top();
+		POperandos.pop();
+	}
+
+	if ( !PTipos.empty() ) {
+		tipoarg = PTipos.top();
+		PTipos.pop();
+	}
 	st.temptipop = st.verificaParametro(st.tempnumproc,k);
-	buildCuadrupleM(PARAM,arg,-1,k);
+	if( st.temptipop == tipoarg && st.temptipop != -1 ) {	
+		buildCuadrupleM(PARAM,arg,-1,k);
+	}
 
 .) { ',' (.k=k+1;.) expresion (.
-	arg = POperandos.top();
-	POperandos.pop();
-	tipoarg = PTipos.top();
-	PTipos.pop();
-	st.temptipop = st.verificaParametro(st.tempnumproc, k);
+	if ( !POperandos.empty() ) {
+		arg = POperandos.top();
+		POperandos.pop();
+	}
+
+	if ( !PTipos.empty() ) {
+		tipoarg = PTipos.top();
+		PTipos.pop();
+	}
+	st.temptipop = st.verificaParametro(st.tempnumproc,k);
 	if( st.temptipop == tipoarg && st.temptipop != -1 ) {	
 		buildCuadrupleM(PARAM,arg,-1,k);
 	}
