@@ -93,7 +93,7 @@ public:
 class symbolTable {
 public:
 
-int temptipo, tempdir, tempnumproc = -1, temptipop;
+int temptipo, tempdir, temptipop, tempnumproc; 
 
 typedef struct {
 	int lsup;
@@ -321,7 +321,7 @@ int t;
 int cont=1;
 	if(hmap.find(a) != hmap.end()) {
 		list<tablaParam>::iterator q;
-		for (q=(*it).second.param.begin(); q!=(*it).second.param.end(); q++) {
+		for (q=hmap[a].param.begin(); q!=hmap[a].param.end(); q++) {
 			if (k == cont){
 				t = q->tipo;
 				b = true;
@@ -394,8 +394,6 @@ void printLista(){
 		cout << (*it).second.tam.vContC << ", " <<  (*it).second.tam.pContC << ", " <<  (*it).second.tam.tContC <<  "\n ";
 		cout << (*it).second.tam.vContB << ", " <<  (*it).second.tam.pContB << ", " <<  (*it).second.tam.tContB <<  "\n ";
 		
-
-		cout << (*it).second.dirI << ", "; 
 		cout << "[";
 	for (p=(*it).second.vars.begin(); p!=(*it).second.vars.end(); p++) {
 		cout << " (" ;
