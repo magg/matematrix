@@ -90,6 +90,58 @@ public:
 };
 
 
+class constTable{
+public:
+
+
+typedef struct {
+	int val;
+	int dirV;
+}intTable[1000];
+
+typedef struct {
+	bool val;
+	int dirV;
+}boolTable[1000];
+
+typedef struct {
+	float val;
+	int dirV;
+}floatTable[1000];
+
+typedef struct {
+	wchar_t* val;
+	int dirV;
+}stringTable[1000];
+
+intTable in; floatTable fn; boolTable bn; stringTable sn;
+
+	int insertaInt(int dirv,int dirb, int i){
+		in[dirv-dirb].val = i;
+		in[dirv-dirb].dirV = dirv;
+		return dirv+1;
+	}
+
+	int insertaFloat(int dirv,int dirb, float f){
+		fn[dirv-dirb].val = f;
+		fn[dirv-dirb].dirV = dirv;
+		return dirv+1;
+	}
+
+	int insertaBoolean(int dirv,int dirb, bool b){
+		bn[dirv-dirb].val = b;
+		bn[dirv-dirb].dirV = dirv;
+		return dirv+1;
+	}
+
+	int insertaString(int dirv,int dirb, wchar_t* s){
+		sn[dirv-dirb].val = s;
+		sn[dirv-dirb].dirV = dirv;
+		return dirv+1;
+	}
+};
+
+
 class symbolTable {
 public:
 
