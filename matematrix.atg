@@ -45,7 +45,7 @@ int // opcodes
 	  GTREQ, LSSEQ, EQEQ, ANDOP, OROP, RET, PRINT, RETURN,
 	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM;
 
-int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact;
+int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux; //Variables utilizadas para generar cuadruplos.
 
 stack<int> PTipos;
 stack<int> POperadores;
@@ -182,10 +182,29 @@ int buildCruadruple2(int op){
 return 0;
 }
 
-int buildCruadruple4(int aux){
-	int uno, dos, id1, id2, res;
-	
-	if( aux == 3 ) {
+int buildCruadruple3(){
+	aux = PTipos.top();
+	PTipos.pop();
+<<<<<<< .mine
+	if(aux == 3 ) {
+		res = POperandos.top();
+		POperandos.pop();
+		cont_cuadruple++;
+		cuadruplos x;
+		x.op = GOTOF;
+		x.opdo1 = res;
+		x.opdo2 = -1;
+		x.res = NULL;
+		hasht[cont_cuadruple] = x;
+		POperadores.pop();
+	} else {
+		cout << "Semantic error: Type mismatch" << endl;
+
+	}
+return 0;
+}
+int buildCuadruple4(int){
+	int id2, res;
 		id2 = -1;
 		res = POperandos.top();
 		POperandos.pop();
@@ -194,15 +213,40 @@ int buildCruadruple4(int aux){
 		x.op = GOTOF;
 		x.opdo1 = res;
 		x.opdo2 = id2;
+		x.res = NULL;
 		hasht[cont_cuadruple] = x;
-		POperadores.pop();
-	} else {
-		
-
-	}
+		PSaltos.push((cont_cuadruple-1));
 return 0;
 }
+void buildCuadruple5(int uno, int dos, int tres,){
 
+	cont_cuadruple++;
+	cuadruplos x;
+	x.op = uno;
+	x.opdo1 = dos;
+	x.opdo2 = tres;
+	x.res = NULL;
+	hasht[cont_cuadruple] = x;
+
+}
+
+
+=======
+
+void buildCuadrupleM(int a, int b, int c, int d){
+
+	cont_cuadruple++;
+
+	cuadruplos x;
+	x.op = a;
+	x.opdo1 = b;
+	x.opdo2 = c;
+	x.res = d;
+	hasht[cont_cuadruple] = x;
+
+}
+
+>>>>>>> .r27
 void printCuadruplos() {
 
 	for(unordered_map<int, cuadruplos>::iterator it = hasht.begin(); it != hasht.end(); it ++){
@@ -281,7 +325,7 @@ PRODUCTIONS
 Ident<wchar_t* &name>= ident (. name = coco_string_create(t->val); .).
 
 matematrix = (. wchar_t* name; InitDeclarations(); .) "program" Ident<name>  (. 
-	st.insertaDirProc(numproc,0, name, MemGlobal.mint, cont_cuadruple); 
+	st.insertaDirProc(numproc,0, name, MemGlobal.mint); 
 .) ';' [variables] (.
 	numproc = numproc+1;
 .) [funcion{funcion}] "main" bloque (.
@@ -328,7 +372,11 @@ funciones = '(' ( funcN | funcE ) ')' ';'.
 funcN = (. wchar_t* name; .)  Ident<name> '(' expresion { ',' expresion } ')'. 
 funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
-variables = "var" ( vares | varns ) { ( vares | varns ) } "end".
+variables = "var" ( vares | varns ) { ( vares | varns ) } "end" (.
+	if (numproc != 0) {
+		st.insertaContDirProc(numproc, cont_cuadruple);
+	}
+.).
 vares = ( vector | matriz ).
 matriz = (. wchar_t* name;int type; .)  "matrix" tipo<type> Ident<name> '['expresion ',' expresion ']' (.
 /*
@@ -543,11 +591,14 @@ factor = (. wchar_t* name; .)  ( Ident<name> (.
 
 
 
-funcion = "def" (funcV | funcT) '('[parametros]')' bloque (.numproc = numproc+1;.).
+funcion = "def" (funcV | funcT) '('[parametros]')' bloque (.
+	buildCuadrupleM(RET,-1,-1,-1);	
+	numproc = numproc+1;
+.).
 
 funcV = (. wchar_t* name;int type; .) "void" (. tipo_proc=-1 ; .) Ident<name>  (.
 	if( st.checaDirProc(numproc, tipo_proc, name) ){
-		st.insertaDirProc(numproc, tipo_proc, name,  MemLoc.mint, cont_cuadruple);
+		st.insertaDirProc(numproc, tipo_proc, name,MemLoc.mint);
 	}
 .).
 
@@ -556,22 +607,22 @@ funcT = (. wchar_t* name;int type; .)  tipo<type> (. tipo_proc = type; .) Ident<
 	if( st.checaDirProc(numproc, tipo_proc, name) ){
 		switch(type){
 			case 0:
-			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint, cont_cuadruple);
+			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint);
 			break;
 			case 1:
-			MemLoc.mfloat = st.newDirProc(numproc, tipo_proc, name, MemLoc.mfloat, cont_cuadruple);
+			MemLoc.mfloat = st.newDirProc(numproc, tipo_proc, name, MemLoc.mfloat);
 			break;
 			case 2:
-			MemLoc.mstring = st.newDirProc(numproc, tipo_proc, name, MemLoc.mstring, cont_cuadruple);
+			MemLoc.mstring = st.newDirProc(numproc, tipo_proc, name, MemLoc.mstring);
 			break;
 			case 3:
-			MemLoc.mboolean = st.newDirProc(numproc, tipo_proc, name, MemLoc.mboolean, cont_cuadruple);
+			MemLoc.mboolean = st.newDirProc(numproc, tipo_proc, name, MemLoc.mboolean);
 			break;
 			case 4:
-			MemLoc.mcomplex = st.newDirProc(numproc, tipo_proc, name, MemLoc.mcomplex, cont_cuadruple);
+			MemLoc.mcomplex = st.newDirProc(numproc, tipo_proc, name, MemLoc.mcomplex);
 			break;
 			default:
-			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint, cont_cuadruple);
+			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint);
 		}
 	}
 
@@ -707,12 +758,32 @@ if( st.checaTablaParam(numproc, type, name) ){
 
 
 ciclo = (ciclofor | ciclowhile).
-condicion = "if" '(' expresion ')' (. 
-int aux;
-aux=PTipos.top();
-BuildCuadruple4(POperadores.top());
+condicion = "if" '(' expresion ')' 
+(. 
+	int aux;
+	aux=PTipos.top();
+	if (aux == 3){
+		buildCuadruple4(POperadores.top());
+	} else {
+		cout << "Semantic error: Type mismatch" << endl;
+	}
+.)
+bloque ["elif" '(' expresion ')'
+(. 
+	int aux;
+	aux=PTipos.top();
+	if (aux == 3){
+		buildCuadruple4(POperadores.top());
+	} else {
+	cout << "Semantic error: Type mismatch" << endl;
+	}
+.)
+bloque { "elif" '(' expresion ')' bloque } ] [ "else" 
+(. 
+buildCuadruple5(GOTO,-1,-1);
+rellenar(PSaltos.pop(), cont_cuadruple);
  .)
-bloque [ "elif" '(' expresion ')' bloque { "elif" '(' expresion ')' bloque } ] [ "else" bloque ].
+bloque ].
 ciclowhile = "while" '(' termino ')' bloque.
 ciclofor = (. wchar_t* name; .)  "for" '(' Ident<name> asignacion expresion ';' Ident<name> ( '-''-' | '+''+' ) ')' bloque.
 escritura = "print" '(' exp{',' exp} ')'.
