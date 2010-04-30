@@ -288,6 +288,15 @@ bool b = false;
 return b;
 }
 
+int rellenar(int a, int b)
+{
+	for(unordered_map<int, cuadruplos>::iterator it = hasht.begin(); it != hasht.end(); it ++)
+	{
+		if ((*it).first == a){
+			x.res = b;
+		}
+	}
+}
 
 int buscaVariable(int a, wchar_t* name){
 int b = 0;	
