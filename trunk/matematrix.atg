@@ -190,9 +190,9 @@ int buildCruadruple2(int op){
 return 0;
 }
 
-int buildCruadruple3(){
-	aux = PTipos.top();
-	PTipos.pop();
+int buildCuadruple3(){
+int res, aux;	
+aux = PTipos.top();
 	if(aux == 3 ) {
 		res = POperandos.top();
 		POperandos.pop();
@@ -224,8 +224,8 @@ int buildCuadruple4(int a){
 		PSaltos.push((cont_cuadruple-1));
 return 0;
 }
-void buildCuadruple5(int uno, int dos, int tres,){
-
+void buildCuadruple5(int uno, int dos, int tres){
+	PSaltos.pop();
 	cont_cuadruple++;
 	cuadruplos x;
 	x.op = uno;
@@ -783,7 +783,7 @@ bloque ["elif" '(' expresion ')'
 bloque { "elif" '(' expresion ')' bloque } ] [ "else" 
 (. 
 buildCuadruple5(GOTO,-1,-1);
-rellenar(PSaltos.pop(), cont_cuadruple);
+rellenar(PSaltos.top(), cont_cuadruple);
  .)
 bloque ].
 ciclowhile = "while" '(' termino ')' bloque.
