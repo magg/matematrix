@@ -197,7 +197,7 @@ int buildCruadruple4(int aux){
 		hasht[cont_cuadruple] = x;
 		POperadores.pop();
 	} else {
-		cout << "Semantic error: Type mismatch" << endl;
+		
 
 	}
 return 0;
