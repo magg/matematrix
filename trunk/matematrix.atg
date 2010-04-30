@@ -350,9 +350,18 @@ Ident<wchar_t* &name>= ident (. name = coco_string_create(t->val); .).
 
 matematrix = (. wchar_t* name; InitDeclarations(); .) "program" Ident<name>  (. 
 	st.insertaDirProc(numproc,0, name, MemGlobal.mint); 
-.) ';' [variables] (.
+.) ';'(.
+	PSaltos.push(cont_cuadruple);
+	buildCuadrupleM(GOTO,-1,-1,-1);
+.) [variables] (.
 	numproc = numproc+1;
-.) [funcion{funcion}] "main" bloque (.
+.) [funcion{funcion}] "main" (.
+	int goo;
+	goo = PSaltos.top();
+	PSaltos.pop();
+	rellenar(goo,cont_cuadruple);
+
+.) bloque (.
 	st.printLista();
 	printCuadruplos();
 .).
@@ -852,7 +861,10 @@ cout << cont_cuadruple << endl;
  .)
 bloque ] 
 (.
-rellenar(PSaltos.top(), cont_cuadruple);
+int sss;
+sss = PSaltos.top();
+PSaltos.pop();
+rellenar(sss, cont_cuadruple);
 .).
 ciclowhile = "while" (. 
 	cout << "entro al while" << endl;
