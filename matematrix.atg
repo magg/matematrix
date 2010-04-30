@@ -46,7 +46,7 @@ int // opcodes
 	  GTREQ, LSSEQ, EQEQ, ANDOP, OROP, RET, PRINT, RETURN,
 	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM;
 
-int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux; //Variables utilizadas para generar cuadruplos.
+int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg;  //Variables utilizadas para generar cuadruplos.
 
 stack<int> PTipos;
 stack<int> POperadores;
@@ -396,7 +396,34 @@ estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | a
 //aesp = ("++" | "--" | "+=" expresion | "-=" expresion ).
 //llamadaFuncU = (. wchar_t* name; .)  Ident<name> '(' exp { ',' exp } ')' ';'.	
 funciones = '(' ( funcN | funcE ) ')' ';'.
-funcN = (. wchar_t* name; .)  Ident<name> '(' expresion { ',' expresion } ')'. 
+
+funcN = (. wchar_t* name; .)  Ident<name> (.
+ 		if ( st.checaDirProc2(name)) {
+ 			st.tempnumproc = st.checaDirProc3(name);
+ 		}
+ .)'(' (.
+ 		buildCuadrupleM(ERA,-1,-1,-1);
+ 		k=1;
+ .) expresion (.
+ 		arg = POperandos.top();
+ 		POperandos.pop();
+ 		tipoarg = PTipos.top();
+ 		PTipos.pop();
+ 		st.temptipop = st.verificaParametro(st.tempnumproc,k);
+ 		buildCuadrupleM(PARAM,arg,-1,k);
+ .) { ',' (.k=k+1;.) expresion (.
+ 		arg = POperandos.top();
+ 		POperandos.pop();
+ 		tipoarg = PTipos.top();
+ 		PTipos.pop();
+ 		st.temptipop = st.verificaParametro(st.tempnumproc, k);
+ 		if( st.temptipop == tipoarg && st.temptipop != -1 ) {
+ 			buildCuadrupleM(PARAM,arg,-1,k);
+ 		}
+ .) } ')' (.
+ 			buildCuadrupleM(GOSUB,arg,-1,-1);
+.).
+
 funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
 variables = "var" ( vares | varns ) { ( vares | varns ) } "end" (.
