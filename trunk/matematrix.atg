@@ -185,7 +185,6 @@ return 0;
 int buildCruadruple3(){
 	aux = PTipos.top();
 	PTipos.pop();
-<<<<<<< .mine
 	if(aux == 3 ) {
 		res = POperandos.top();
 		POperandos.pop();
@@ -230,9 +229,6 @@ void buildCuadruple5(int uno, int dos, int tres,){
 
 }
 
-
-=======
-
 void buildCuadrupleM(int a, int b, int c, int d){
 
 	cont_cuadruple++;
@@ -246,7 +242,6 @@ void buildCuadrupleM(int a, int b, int c, int d){
 
 }
 
->>>>>>> .r27
 void printCuadruplos() {
 
 	for(unordered_map<int, cuadruplos>::iterator it = hasht.begin(); it != hasht.end(); it ++){
