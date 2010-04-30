@@ -202,15 +202,14 @@ int buildCruadruple3(){
 	}
 return 0;
 }
-int buildCuadruple4(int){
+int buildCuadruple4(int a){
 	int id2, res;
 		id2 = -1;
-		res = POperandos.top();
 		POperandos.pop();
 		cont_cuadruple++;
 		cuadruplos x;
 		x.op = GOTOF;
-		x.opdo1 = res;
+		x.opdo1 = a;
 		x.opdo2 = id2;
 		x.res = NULL;
 		hasht[cont_cuadruple] = x;
