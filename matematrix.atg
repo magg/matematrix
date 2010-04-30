@@ -25,6 +25,7 @@ codigo para tipos
 COMPILER matematrix
 
 symbolTable st;
+constTable ct;
 Memoria MemGlobal;
 Memoria MemTemp;
 Memoria MemConst;
@@ -45,7 +46,7 @@ int // opcodes
 	  GTREQ, LSSEQ, EQEQ, ANDOP, OROP, RET, PRINT, RETURN,
 	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM;
 
-int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg; //Variables utilizadas para generar cuadruplos.
+int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux; //Variables utilizadas para generar cuadruplos.
 
 stack<int> PTipos;
 stack<int> POperadores;
@@ -64,7 +65,7 @@ unordered_map<int, cuadruplos> hasht;
 int semantico(int a, int b , int c) {
 
 int t;
-			//	+ - * / <> > < >= <= == and or =
+			//	 +  -  *  /  <> >  < >= <= == and or =
 int semanticCube[5][5][13] = {{ {0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 5, 5, 0},
                                 {1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 5, 5, 5},
    /*int*/                      {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
@@ -106,17 +107,25 @@ int rellenar(int a, int b) {
 
 int buildCruadruple(int op){
 	int uno, dos, id1, id2, res, temp;
-
 	dos = PTipos.top();
 	PTipos.pop();
 	uno = PTipos.top();
 	PTipos.pop();
 
-	if( semantico(uno, dos, op) != 5 ) {
+/*
+while (!POperandos.empty()) {
+cout << "Pila operandos en cuadruplo" << POperandos.top() << endl;
+POperandos.pop();
+}
+*/
+		
+if(semantico(uno, dos, op) != 5 ) {	
+	
 	id2 = POperandos.top();
 	POperandos.pop();
 	id1 = POperandos.top();
 	POperandos.pop();
+	
 	res = semantico(uno, dos, op);
 		switch(res) {
 			case 0:
@@ -142,17 +151,17 @@ int buildCruadruple(int op){
 			default:
 				cout << "Type mismatch" << endl;
 		}
-	cont_cuadruple++;
-
 	cuadruplos x;
 	x.op = op;
 	x.opdo1 = id1;
 	x.opdo2 = id2;
 	x.res = temp;
 	hasht[cont_cuadruple] = x;
+	cont_cuadruple++;
 	POperandos.push(temp);
 	PTipos.push(res);
 	POperadores.pop();
+cout << "pila tipos top " << PTipos.top() << endl;
 	} else {
 		cout << "Semantic error: Type mismatch" << endl;
 
@@ -174,14 +183,13 @@ int buildCruadruple2(int op){
 		id1 = -1;
 		res = POperandos.top();
 		POperandos.pop();
-
-		cont_cuadruple++;
 		cuadruplos x;
 		x.op = op;
 		x.opdo1 = id1;
 		x.opdo2 = id2;
 		x.res = res;
 		hasht[cont_cuadruple] = x;
+		cont_cuadruple++;
 		POperadores.pop();
 	} else {
 		cout << "Semantic error: Type mismatch" << endl;
@@ -189,63 +197,77 @@ int buildCruadruple2(int op){
 	}
 return 0;
 }
-
 int buildCuadruple3(){
 int res, aux;	
 aux = PTipos.top();
+PTipos.pop();
+cout << "El valor de aux es: " << aux << endl;
 	if(aux == 3 ) {
 		res = POperandos.top();
 		POperandos.pop();
 		cont_cuadruple++;
+cout << "1er cuadruplo" << cont_cuadruple << endl;
 		cuadruplos x;
 		x.op = GOTOF;
 		x.opdo1 = res;
 		x.opdo2 = -1;
 		x.res = NULL;
 		hasht[cont_cuadruple] = x;
-		POperadores.pop();
+		PSaltos.push((cont_cuadruple-1));
 	} else {
 		cout << "Semantic error: Type mismatch" << endl;
 
 	}
 return 0;
 }
+
+int buildCuadrupleWhile(){
+	int falso = PSaltos.top();
+	PSaltos.pop();
+	int retorno = PSaltos.top();
+	PSaltos.pop();
+	cont_cuadruple++;
+cout << "2ndo cuadruplo" << cont_cuadruple << endl;
+	cuadruplos x;
+	x.op = GOTO;
+	x.opdo1 = -1;
+	x.opdo2 = -1;
+	x.res = retorno;
+	hasht[cont_cuadruple] = x;
+	rellenar(falso,cont_cuadruple);
+return 0;
+}
 int buildCuadruple4(int a){
 	int id2, res;
 		id2 = -1;
 		POperandos.pop();
-		cont_cuadruple++;
 		cuadruplos x;
 		x.op = GOTOF;
 		x.opdo1 = a;
 		x.opdo2 = id2;
-		x.res = NULL;
+		x.res = -1;
 		hasht[cont_cuadruple] = x;
-		PSaltos.push((cont_cuadruple-1));
+		cont_cuadruple++;
 return 0;
 }
 void buildCuadruple5(int uno, int dos, int tres){
-	PSaltos.pop();
-	cont_cuadruple++;
 	cuadruplos x;
 	x.op = uno;
 	x.opdo1 = dos;
 	x.opdo2 = tres;
-	x.res = NULL;
+	x.res = -1;
 	hasht[cont_cuadruple] = x;
-
+	cont_cuadruple++;
 }
 
 void buildCuadrupleM(int a, int b, int c, int d){
-
-	cont_cuadruple++;
-
 	cuadruplos x;
 	x.op = a;
 	x.opdo1 = b;
 	x.opdo2 = c;
 	x.res = d;
 	hasht[cont_cuadruple] = x;
+	cont_cuadruple++;
 
 }
 
@@ -266,7 +288,7 @@ void InitDeclarations() { // it must exist
 	plus=0; minus=1; times=2; slash=3; diff=4; gtr=5; lss=6; gtreq=7; lsseq=8; eqeq=9; andop=10; orop=11; equ=12; // operators
 	var = 0; def = 1; // object kinds
 
-	cont_cuadruple=0;	
+	cont_cuadruple=1;	
 	
 	// opcodes
 	ADD  =  0; SUB   =  1; MUL   =  2; DIV   =  3; DIFF   =  4; GTR = 5; LSS = 6;
@@ -348,20 +370,23 @@ tipo<int &type>
 "string" (. type = stringg; .) | 
 "complex" (. type = complexi; .) ).
 
-
-var_cte (.
-	int n1;
-	float m1;
-	int b1;
-	wchar_t *s1;
-.) = ( 
-	number (. swscanf(t->val, L"%d", &n1); .)  | 
-	flotante (. swscanf(t->val, L"%f", &m1); .) | 
-	"true" (. b1=1; .) |
-	"false" (. b1=0; .) |
-	string (. s1 = coco_string_create(t->val); .)  | 
-	imaginario 
-).
+var_cte (.int n1;float m1;bool b1;wchar_t *s1;.) = ( number (. 
+	swscanf(t->val, L"%d", &n1);
+	//cout << n1 << " es dirV " << MemConst.mint << endl; 
+	MemConst.mint = ct.insertaInt(MemConst.mint,11000,n1);
+.)  | flotante (. 
+	swscanf(t->val, L"%f", &m1); 
+	MemConst.mfloat = ct.insertaBoolean(MemConst.mfloat,12000, m1);
+.) | "true" (. 
+	b1 = true;
+	MemConst.mboolean = ct.insertaBoolean(MemConst.mboolean,14000, b1);
+.) | "false" (. 
+	b1 = false; 
+	MemConst.mboolean = ct.insertaBoolean(MemConst.mboolean,14000, b1);
+.) | string (. 
+	s1 = coco_string_create(t->val); 
+	MemConst.mstring = ct.insertaBoolean(MemConst.mstring,13000, s1);
+.)  | imaginario ).
 
 bloque = '{' [ estatuto { estatuto } ] '}'.
 index = '[' exp ']' {  '[' exp ']'  }.
@@ -371,54 +396,7 @@ estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | a
 //aesp = ("++" | "--" | "+=" expresion | "-=" expresion ).
 //llamadaFuncU = (. wchar_t* name; .)  Ident<name> '(' exp { ',' exp } ')' ';'.	
 funciones = '(' ( funcN | funcE ) ')' ';'.
-funcN = (. wchar_t* name; .)  Ident<name> (.
-	if ( st.checaDirProc2(name)) {
-		st.tempnumproc = st.checaDirProc3(name);
-	}
-.)'(' (.
-
-	buildCuadrupleM(ERA,-1,-1,-1);
-	k=1;
-
-.) expresion (.
-	if ( !POperandos.empty() ) {
-		arg = POperandos.top();
-		POperandos.pop();
-	}
-
-	if ( !PTipos.empty() ) {
-		tipoarg = PTipos.top();
-		PTipos.pop();
-	}
-	st.temptipop = st.verificaParametro(st.tempnumproc,k);
-	if( st.temptipop == tipoarg && st.temptipop != -1 ) {	
-		buildCuadrupleM(PARAM,arg,-1,k);
-	}
-
-.) { ',' (.k=k+1;.) expresion (.
-	if ( !POperandos.empty() ) {
-		arg = POperandos.top();
-		POperandos.pop();
-	}
-
-	if ( !PTipos.empty() ) {
-		tipoarg = PTipos.top();
-		PTipos.pop();
-	}
-	st.temptipop = st.verificaParametro(st.tempnumproc,k);
-	if( st.temptipop == tipoarg && st.temptipop != -1 ) {	
-		buildCuadrupleM(PARAM,arg,-1,k);
-	}
-
-
-
-.) } ')' (.
-		buildCuadrupleM(GOSUB,arg,-1,-1);
-
-.). 
-
-
-
+funcN = (. wchar_t* name; .)  Ident<name> '(' expresion { ',' expresion } ')'. 
 funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
 variables = "var" ( vares | varns ) { ( vares | varns ) } "end" (.
@@ -575,7 +553,8 @@ exp = (.int op; .)  exp1 [ relOp<op> (.
 	POperadores.push(op);
 .) exp1 (.
 	if ( !POperadores.empty() ) {
-		if ( POperadores.top() == op) {
+		if ( POperadores.top() == gtr || POperadores.top() == lss || POperadores.top() == diff || POperadores.top() == eqeq || POperadores.top() == lsseq || POperadores.top() == gtreq ) {
+cout << "Entro a hacer cuadruplo... comparacion" << endl;
 			buildCruadruple(POperadores.top());
 		}
 	} 
@@ -812,7 +791,9 @@ condicion = "if" '(' expresion ')'
 	int aux;
 	aux=PTipos.top();
 	if (aux == 3){
-		buildCuadruple4(POperadores.top());
+cout << "entra a hacer cuadruplo condicion" << endl;
+		buildCuadruple4(POperandos.top());
+		PSaltos.push((cont_cuadruple-1));
 	} else {
 		cout << "Semantic error: Type mismatch" << endl;
 	}
@@ -822,18 +803,36 @@ bloque ["elif" '(' expresion ')'
 	int aux;
 	aux=PTipos.top();
 	if (aux == 3){
-		buildCuadruple4(POperadores.top());
+		buildCuadruple4(POperandos.top());
 	} else {
 	cout << "Semantic error: Type mismatch" << endl;
 	}
 .)
 bloque { "elif" '(' expresion ')' bloque } ] [ "else" 
 (. 
+int salto;
 buildCuadruple5(GOTO,-1,-1);
-rellenar(PSaltos.top(), cont_cuadruple);
+salto = PSaltos.top();
+PSaltos.pop();
+rellenar(salto, cont_cuadruple);
+PSaltos.push((cont_cuadruple-1));
+
+cout << "En psaltos despues de cuadruplo5 " << PSaltos.top() << endl;
+cout << cont_cuadruple << endl;
+
  .)
-bloque ].
-ciclowhile = "while" '(' termino ')' bloque.
+bloque ] 
+(.
+rellenar(PSaltos.top(), cont_cuadruple);
+.).
+ciclowhile = "while" (. 
+	cout << "entro al while" << endl;
+	PSaltos.push(cont_cuadruple); 
+.) '(' expresion ')' (.
+	buildCuadruple3();
+.) bloque (. 
+	buildCuadrupleWhile();
+.).
 ciclofor = (. wchar_t* name; .)  "for" '(' Ident<name> asignacion expresion ';' Ident<name> ( '-''-' | '+''+' ) ')' bloque.
 escritura = "print" '(' exp{',' exp} ')'.
 lectura = (. wchar_t* name; .)  "read" '(' Ident<name> [ '[' exp ']' ] ')'.
