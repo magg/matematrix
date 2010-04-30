@@ -93,7 +93,7 @@ public:
 class symbolTable {
 public:
 
-int temptipo, tempdir;
+int temptipo, tempdir, tempnumproc = -1, temptipop;
 
 typedef struct {
 	int lsup;
@@ -286,6 +286,57 @@ bool b = false;
 	}
 
 return b;
+}
+
+
+
+bool checaDirProc2(wchar_t* nombre){
+
+bool b = false;
+
+	for(unordered_map<int, dirProc>::iterator it = hmap.begin(); it != hmap.end(); it ++){
+		if( wcscmp((*it).second.name, nombre) == 0 ){
+			b = true;		
+		}
+	}
+
+return b;
+}
+
+int checaDirProc3(wchar_t* nombre){
+
+	for(unordered_map<int, dirProc>::iterator it = hmap.begin(); it != hmap.end(); it ++){
+		if( wcscmp((*it).second.name, nombre) == 0 ){
+			tempnumproc = (*it).first;		
+		}
+	}
+
+return tempnumproc ;
+}
+
+
+int verificaParametro(int a, int k){
+bool b = false;
+int t;
+int cont=1;
+	if(hmap.find(a) != hmap.end()) {
+		list<tablaParam>::iterator q;
+		for (q=(*it).second.param.begin(); q!=(*it).second.param.end(); q++) {
+			if (k == cont){
+				t = q->tipo;
+				b = true;
+			} else {
+				cont++;			
+			} 
+		}
+	}
+
+	if (b) {
+		return t;
+	} else{
+		return -1;
+	}
+
 }
 
 int buscaVariable(int a, wchar_t* name){
