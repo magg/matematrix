@@ -96,6 +96,14 @@ t = semanticCube[a][b][c];
 return t;
 }
 
+
+int rellenar(int a, int b) {
+	if(hasht.find(a) != hasht.end()) {
+		hasht[a].res = b;
+	}
+	
+}
+
 int buildCruadruple(int op){
 	int uno, dos, id1, id2, res, temp;
 
