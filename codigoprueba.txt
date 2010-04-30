@@ -22,6 +22,7 @@ def void funcio1(int c) {
 var 
 int f=3;
 end	
+(funcion(a));
 while(g < a){
 		a = d * x;
 	}
