@@ -182,19 +182,25 @@ int buildCruadruple2(int op){
 return 0;
 }
 
+int buildCruadruple4(int aux){
+	int uno, dos, id1, id2, res;
+	
+	if( aux == 3 ) {
+		id2 = -1;
+		res = POperandos.top();
+		POperandos.pop();
+		cont_cuadruple++;
+		cuadruplos x;
+		x.op = GOTOF;
+		x.opdo1 = res;
+		x.opdo2 = id2;
+		hasht[cont_cuadruple] = x;
+		POperadores.pop();
+	} else {
+		cout << "Semantic error: Type mismatch" << endl;
 
-
-void buildCuadrupleM(int a, int b, int c, int d){
-
-	cont_cuadruple++;
-
-	cuadruplos x;
-	x.op = a;
-	x.opdo1 = b;
-	x.opdo2 = c;
-	x.res = d;
-	hasht[cont_cuadruple] = x;
-
+	}
+return 0;
 }
 
 void printCuadruplos() {
@@ -275,7 +281,7 @@ PRODUCTIONS
 Ident<wchar_t* &name>= ident (. name = coco_string_create(t->val); .).
 
 matematrix = (. wchar_t* name; InitDeclarations(); .) "program" Ident<name>  (. 
-	st.insertaDirProc(numproc,0, name, MemGlobal.mint); 
+	st.insertaDirProc(numproc,0, name, MemGlobal.mint, cont_cuadruple); 
 .) ';' [variables] (.
 	numproc = numproc+1;
 .) [funcion{funcion}] "main" bloque (.
@@ -322,11 +328,7 @@ funciones = '(' ( funcN | funcE ) ')' ';'.
 funcN = (. wchar_t* name; .)  Ident<name> '(' expresion { ',' expresion } ')'. 
 funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
-variables = "var" ( vares | varns ) { ( vares | varns ) } "end" (.
-	if (numproc != 0) {
-		st.insertaContDirProc(numproc, cont_cuadruple);
-	}
-.).
+variables = "var" ( vares | varns ) { ( vares | varns ) } "end".
 vares = ( vector | matriz ).
 matriz = (. wchar_t* name;int type; .)  "matrix" tipo<type> Ident<name> '['expresion ',' expresion ']' (.
 /*
@@ -541,14 +543,11 @@ factor = (. wchar_t* name; .)  ( Ident<name> (.
 
 
 
-funcion = "def" (funcV | funcT) '('[parametros]')' bloque (.
-	buildCuadrupleM(RET,-1,-1,-1);	
-	numproc = numproc+1;
-.).
+funcion = "def" (funcV | funcT) '('[parametros]')' bloque (.numproc = numproc+1;.).
 
 funcV = (. wchar_t* name;int type; .) "void" (. tipo_proc=-1 ; .) Ident<name>  (.
 	if( st.checaDirProc(numproc, tipo_proc, name) ){
-		st.insertaDirProc(numproc, tipo_proc, name,MemLoc.mint);
+		st.insertaDirProc(numproc, tipo_proc, name,  MemLoc.mint, cont_cuadruple);
 	}
 .).
 
@@ -557,22 +556,22 @@ funcT = (. wchar_t* name;int type; .)  tipo<type> (. tipo_proc = type; .) Ident<
 	if( st.checaDirProc(numproc, tipo_proc, name) ){
 		switch(type){
 			case 0:
-			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint);
+			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint, cont_cuadruple);
 			break;
 			case 1:
-			MemLoc.mfloat = st.newDirProc(numproc, tipo_proc, name, MemLoc.mfloat);
+			MemLoc.mfloat = st.newDirProc(numproc, tipo_proc, name, MemLoc.mfloat, cont_cuadruple);
 			break;
 			case 2:
-			MemLoc.mstring = st.newDirProc(numproc, tipo_proc, name, MemLoc.mstring);
+			MemLoc.mstring = st.newDirProc(numproc, tipo_proc, name, MemLoc.mstring, cont_cuadruple);
 			break;
 			case 3:
-			MemLoc.mboolean = st.newDirProc(numproc, tipo_proc, name, MemLoc.mboolean);
+			MemLoc.mboolean = st.newDirProc(numproc, tipo_proc, name, MemLoc.mboolean, cont_cuadruple);
 			break;
 			case 4:
-			MemLoc.mcomplex = st.newDirProc(numproc, tipo_proc, name, MemLoc.mcomplex);
+			MemLoc.mcomplex = st.newDirProc(numproc, tipo_proc, name, MemLoc.mcomplex, cont_cuadruple);
 			break;
 			default:
-			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint);
+			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint, cont_cuadruple);
 		}
 	}
 
@@ -708,7 +707,12 @@ if( st.checaTablaParam(numproc, type, name) ){
 
 
 ciclo = (ciclofor | ciclowhile).
-condicion = "if" '(' expresion ')' bloque [ "elif" expresion bloque { "elif" expresion bloque } ] [ "else" bloque ].
+condicion = "if" '(' expresion ')' (. 
+int aux;
+aux=PTipos.top();
+BuildCuadruple4(POperadores.top());
+ .)
+bloque [ "elif" '(' expresion ')' bloque { "elif" '(' expresion ')' bloque } ] [ "else" bloque ].
 ciclowhile = "while" '(' termino ')' bloque.
 ciclofor = (. wchar_t* name; .)  "for" '(' Ident<name> asignacion expresion ';' Ident<name> ( '-''-' | '+''+' ) ')' bloque.
 escritura = "print" '(' exp{',' exp} ')'.
