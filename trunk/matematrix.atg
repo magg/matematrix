@@ -205,7 +205,6 @@ cout << "El valor de aux es: " << aux << endl;
 	if(aux == 3 ) {
 		res = POperandos.top();
 		POperandos.pop();
-		cont_cuadruple++;
 cout << "1er cuadruplo" << cont_cuadruple << endl;
 		cuadruplos x;
 		x.op = GOTOF;
@@ -213,6 +212,7 @@ cout << "1er cuadruplo" << cont_cuadruple << endl;
 		x.opdo2 = -1;
 		x.res = NULL;
 		hasht[cont_cuadruple] = x;
+		cont_cuadruple++;
 		PSaltos.push((cont_cuadruple-1));
 	} else {
 		cout << "Semantic error: Type mismatch" << endl;
@@ -226,7 +226,6 @@ int buildCuadrupleWhile(){
 	PSaltos.pop();
 	int retorno = PSaltos.top();
 	PSaltos.pop();
-	cont_cuadruple++;
 cout << "2ndo cuadruplo" << cont_cuadruple << endl;
 	cuadruplos x;
 	x.op = GOTO;
@@ -234,6 +233,7 @@ cout << "2ndo cuadruplo" << cont_cuadruple << endl;
 	x.opdo2 = -1;
 	x.res = retorno;
 	hasht[cont_cuadruple] = x;
+	cont_cuadruple++;
 	rellenar(falso,cont_cuadruple);
 return 0;
 }
