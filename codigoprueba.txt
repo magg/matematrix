@@ -4,43 +4,28 @@ int a;
 float b;
 int g = 4;
 int x = 6;
-matrix int uno[5,3] = ([1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15]);
 end
-
 
 def void funcion(int c) { 		
 var 
 int d=2;
 end	
-
-a = d+x;
+	if(a < x){
+		a = d * x;
+	} else {
+		a= d;
+	}
+a = d * x;
 }
 
-def void funcion1(int n) { 		
+def void funcio1(int c) { 		
 var 
-int k=0;
-end
-
+int f=3;
+end	
+while(g < a){
+		a = d * x;
+	}
 }
-
-/*	
-
-	//var 
-	//
-
-	def funcion(int c) { 				//Checar en diagramas si se puede asignar al momento de mandar el parametro
-		var int d=2;				//En los diagramas no se pueden crear las variables en la funcion 
-		while(a<b){				//Cambiar el nombre de "ciclo" por el "while" y agregar el "for"
-			d = d*5;			//No hay para realizar asignacion ni realizar operaciones....					
-		}
-	}
-
-	def operacion(){
-		matrix int dos[5,3] = ([1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15]);
-		matrix int res[5,3] = sum_m(uno + dos);
-	}
-	//funcion1(5);
-*/
 
 main {
 	
