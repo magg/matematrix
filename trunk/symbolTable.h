@@ -231,6 +231,14 @@ switch(tipo) {
 return m+1;
 }
 
+void newTablaDesc(int a, int inf, int sup, int k){
+	tablaArr x;
+	x.lsup = sup;
+	x.linf = inf;
+	x.m = k;
+	//hmap[a].vars.dim.push_back(x);
+}
+
 
 int newTablaVarArr(int a, int tipo, wchar_t* nombre, int m){
 
@@ -238,6 +246,10 @@ tablaVars x;
 
 return m;
 }
+
+
+
+
 
 bool checaTablaVars(int a, int tipo, wchar_t* nombre){
 
