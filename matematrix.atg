@@ -46,7 +46,7 @@ int // opcodes
 	  GTREQ, LSSEQ, EQEQ, ANDOP, OROP, RET, PRINT, RETURN,
 	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM;
 
-int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,numdim;  //Variables utilizadas para generar cuadruplos.
+int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,numdim,,conti,contf,contb,conts;  //Variables utilizadas para generar cuadruplos.
 
 stack<int> PTipos;
 stack<int> POperadores;
