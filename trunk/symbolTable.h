@@ -93,6 +93,7 @@ public:
 class constTable{
 public:
 
+int tempconst, constTipo;
 
 typedef struct {
 	int val;
