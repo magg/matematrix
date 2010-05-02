@@ -46,12 +46,13 @@ int // opcodes
 	  GTREQ, LSSEQ, EQEQ, ANDOP, OROP, RET, PRINT, RETURN,
 	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM;
 
-int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg;  //Variables utilizadas para generar cuadruplos.
+int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,numdim;  //Variables utilizadas para generar cuadruplos.
 
 stack<int> PTipos;
 stack<int> POperadores;
 stack<int> POperandos;
 stack<int> PSaltos;
+stack<int> PDimensiones;
 
 typedef struct {
 	int op;
@@ -111,13 +112,6 @@ int buildCruadruple(int op){
 	PTipos.pop();
 	uno = PTipos.top();
 	PTipos.pop();
-
-/*
-while (!POperandos.empty()) {
-cout << "Pila operandos en cuadruplo" << POperandos.top() << endl;
-POperandos.pop();
-}
-*/
 		
 if(semantico(uno, dos, op) != 5 ) {	
 	
@@ -210,7 +204,7 @@ cout << "1er cuadruplo" << cont_cuadruple << endl;
 		x.op = GOTOF;
 		x.opdo1 = res;
 		x.opdo2 = -1;
-		x.res = NULL;
+		x.res = -1;
 		hasht[cont_cuadruple] = x;
 		cont_cuadruple++;
 		PSaltos.push((cont_cuadruple-1));
@@ -270,6 +264,78 @@ void buildCuadrupleM(int a, int b, int c, int d){
 	cont_cuadruple++;
 
 }
+void buildCuadrupleFOR(){
+	int temp, temp2;
+	int tipo = PTipos.top();
+	PTipos.pop();
+	cout << "entro al for" << endl;
+		switch(tipo) {
+			case 0:
+				temp = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+				temp2 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+			break;
+			case 1:
+				temp = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				temp2 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+			break;
+			case 2:
+				temp = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+				temp2 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);				
+			break;
+			case 3:
+				temp = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				temp2 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+			break;
+			case 4:
+				temp = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				temp2 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+			break;
+			default:
+				cout << "Type mismatch FOR.." << endl;
+		}
+cout << "genero temporales" << endl;
+	int exp2 = POperandos.top();
+	POperandos.pop();
+cout << "saco de operandos exp2: " << exp2 << endl;
+	cuadruplos x,y,z;
+
+	x.op = 12;
+	x.opdo1 = exp2;
+	x.opdo2 = -1;
+	x.res = temp;
+
+	y.op = 8;
+	y.opdo1 = asact;
+	y.opdo2 = temp;
+	y.res = temp2;
+
+	z.op = GOTOF;
+	z.opdo1 = temp2;
+	z.opdo2 = -1;
+	z.res = -1;
+
+	hasht[cont_cuadruple] = x;
+	cont_cuadruple++;
+
+	hasht[cont_cuadruple] = y;
+	cont_cuadruple++;
+
+	hasht[cont_cuadruple] = z;
+	cont_cuadruple++;
+cout << "genero cuadruplos" << endl;
+	//Libera temp
+	PSaltos.push((cont_cuadruple-2));
+}
 
 void printCuadruplos() {
 
@@ -289,7 +355,7 @@ void InitDeclarations() { // it must exist
 	var = 0; def = 1; // object kinds
 
 	cont_cuadruple=1;	
-	
+	numdim=0;	
 	// opcodes
 	ADD  =  0; SUB   =  1; MUL   =  2; DIV   =  3; DIFF   =  4; GTR = 5; LSS = 6;
 	GTREQ = 7; LSSEQ =8; EQEQ =9; ANDOP =10; OROP = 11; EQU = 12; RET = 13; GOTO = 14;
@@ -551,12 +617,49 @@ varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (.
 		}
 	}
 
-	}
-.)  ['=' exp1] ';'. //[index] ( [asignacion] | ';'). 
+}
+//PDimensiones.push(-1);
+.)
+['['
+(. numdim++; .)
+number(.
+int n1;
+swscanf(t->val, L"%d", &n1);
+if (n1 < 1) (L"La constante debe ser mayor que 0.");
+else PDimensiones.push(n1);.)
+']'
+{'[' 
+(. numdim++; .)
+number(.
+int n1;
+swscanf(t->val, L"%d", &n1);
+if (n1 < 1) (L"La constante debe ser mayor que 0.");
+else PDimensiones.push(n1);.)
+']'}
+(. 
+int R,numtemp, i;
+R=0;
+numtemp = 1;
+i=numdim;
+while (numtemp <= numdim ){
+//st.newTablaDesc(numproc,-1,-1,-1);
+numtemp++;
+}
+cout << "numero de procedimiento arreglo" << numproc << endl;.)
+]
+
+/*
+PDimensiones.top();
+Lsdim=PDimensiones.top()-1;
+//PDimensiones.pop();
+Lidim=0;
+*/
+['=' exp1] ';'. //[index] ( [asignacion] | ';'). 
 
 
 eqOp<int &op> = (. op = -1; .) '=' (. op = equ;.) .
 
+//ASIGNACION
 asignacion = (.int op; wchar_t* name; .)  Ident<name> (.
 	asact = st.buscaVariable(numproc, name);
 	cout << " tu as dir es " << asact <<endl;
@@ -572,7 +675,7 @@ asignacion = (.int op; wchar_t* name; .)  Ident<name> (.
 		}
 	}
 .) ';'.
-
+//EXPRESION
 expresion = (.int op; .) exp (.
 	if ( !POperadores.empty() ) {
 		if ( POperadores.top() == andop || POperadores.top() == orop) {
@@ -811,18 +914,6 @@ if( st.checaTablaParam(numproc, type, name) ){
 
 .) }.
 
-
-
-
-
-
-
-
-
-
-
-
-
 ciclo = (ciclofor | ciclowhile).
 condicion = "if" '(' expresion ')' 
 (. 
@@ -859,13 +950,14 @@ cout << "En psaltos despues de cuadruplo5 " << PSaltos.top() << endl;
 cout << cont_cuadruple << endl;
 
  .)
-bloque ] 
+bloque ]
 (.
 int sss;
 sss = PSaltos.top();
 PSaltos.pop();
 rellenar(sss, cont_cuadruple);
 .).
+//Acciones para generar cuadruplos de WHILE
 ciclowhile = "while" (. 
 	cout << "entro al while" << endl;
 	PSaltos.push(cont_cuadruple); 
@@ -874,9 +966,51 @@ ciclowhile = "while" (.
 .) bloque (. 
 	buildCuadrupleWhile();
 .).
-ciclofor = (. wchar_t* name; .)  "for" '(' Ident<name> asignacion expresion ';' Ident<name> ( '-''-' | '+''+' ) ')' bloque.
-escritura = "print" '(' exp{',' exp} ')'.
-lectura = (. wchar_t* name; .)  "read" '(' Ident<name> [ '[' exp ']' ] ')'.
+//Acciones para generar cuadruplos de FOR
+ciclofor = (. wchar_t* name; .)  "for" '(' asignacion expresion ';'(.
+	buildCuadrupleFOR();
+.) ')' bloque (.
+cout << "salio bloque" << endl;
+	buildCuadrupleM(0,asact,1,asact);
+	int retorno = PSaltos.top();
+	PSaltos.pop();
+	buildCuadrupleM(GOTO,-1,-1,retorno);
+	rellenar((retorno+1), cont_cuadruple);
+
+.) .
+//Acciones para generar cuadruplos de de escritura (WRITE)
+escritura = "print" '(' exp (.
+	cout << "entro al print" << endl;
+	int resul = POperandos.top();
+	POperandos.pop();
+cout << "pop : " << resul << endl;
+	buildCuadrupleM(PRINT,resul,-1,-1);
+cout << "creo cuadruplo print" << endl;
+.){ ',' exp(.
+	cout << "entro al print" << endl;
+	int resul = POperandos.top();
+	POperandos.pop();
+cout << "pop : " << resul << endl;
+	buildCuadrupleM(PRINT,resul,-1,-1);
+cout << "creo cuadruplo print" << endl;
+.) } ')'  ';'.
+//Acciones para generar cuadruplos de de escritura (READ)
+lectura = (. wchar_t* name; .)  "read" '(' Ident<name> ')' (.
+	if ( st.checaDirProc2(name)) {
+		st.tempnumproc = st.checaDirProc3(name);
+	}	
+	int idread = st.buscaVariable(st.tempnumproc, name);
+	cout << " id de read: " << idread <<endl;
+	POperandos.push(idread);
+
+	cout << "entro al READ" << endl;
+	int resulr = POperandos.top();
+	POperandos.pop();
+	cout << "pop : " << resulr << endl;
+	buildCuadrupleM(READ,resulr,-1,-1);
+	cout << "creo cuadruplo READ" << endl;
+.)';'.
+
 Sum_V = "sum_v" '(' expresion { ',' expresion } ')' ';'.
 Mul_V = "mul_v" '('  expresion { ',' expresion } ')' ';'.
 pro_ev = "pro_ev" '(' expresion ',' expresion ')' ';'.
