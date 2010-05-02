@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <stack>
 #include <wchar.h>
 #include <complex>
@@ -44,9 +45,9 @@ int // object kinds
 int // opcodes
 	  ADD,  SUB,   MUL,   DIV,   EQU,  LSS, GTR, DIFF,
 	  GTREQ, LSSEQ, EQEQ, ANDOP, OROP, RET, PRINT, RETURN,
-	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM;
+	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM, END;
 
-int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,numdim,conti,contf,contb,conts;  //Variables utilizadas para generar cuadruplos.
+int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,conti,contf,contb,conts,numdim;  //Variables utilizadas para generar cuadruplos.
 
 stack<int> PTipos;
 stack<int> POperadores;
@@ -339,9 +340,44 @@ cout << "genero cuadruplos" << endl;
 
 void printCuadruplos() {
 
+ofstream f1;
+ofstream c1;
+ofstream c2;
+ofstream c3;
+ofstream c4;
+f1.open ("cuadruplos.matrix");
 	for(unordered_map<int, cuadruplos>::iterator it = hasht.begin(); it != hasht.end(); it ++){
 	cout << (*it).first << " " << (*it).second.op << " " << (*it).second.opdo1 << " " << (*it).second.opdo2 << " " << (*it).second.res << endl;
+	f1 << (*it).first << " " << (*it).second.op << " " << (*it).second.opdo1 << " " << (*it).second.opdo2 << " " << (*it).second.res << endl;
 	}
+f1.close();
+
+
+c1.open("int.cte");
+
+	for (int n=0; n<conti; n++){
+		//cout << intTable[n].dirV << " " << intTable[n].val;
+		c1 << ct.in[n].dirV << " " << ct.in[n].val << endl;	
+	}
+c1.close();
+c2.open("float.cte");
+	for (int n=0; n<contf; n++){
+		//cout << floatTable[n].dirV << " " << floatTable[n].val;
+		c2 << ct.fn[n].dirV << " " << ct.fn[n].val << endl;
+	}
+c2.close();
+c3.open("str.cte");
+	for (int n=0; n<contf; n++){
+		//cout << stringTable[n].dirV << " " << stringTable[n].val;
+		c3 << ct.sn[n].dirV << " " << ct.sn[n].val << endl;
+	}
+c3.close();
+c4.open("bool.cte");
+	for (int n=0; n<contf; n++){
+		//cout << boolTable[n].dirV << " " << boolTable[n].val;
+		c4 << ct.bn[n].dirV << " " << ct.bn[n].val << endl;	
+	}
+c4.close();
 }
 
 
@@ -356,10 +392,12 @@ void InitDeclarations() { // it must exist
 
 	cont_cuadruple=1;	
 	numdim=0;	
+	conti=0;contf=0;contb=0;conts=0;
+
 	// opcodes
 	ADD  =  0; SUB   =  1; MUL   =  2; DIV   =  3; DIFF   =  4; GTR = 5; LSS = 6;
-	GTREQ = 7; LSSEQ =8; EQEQ =9; ANDOP =10; OROP = 11; EQU = 12; RET = 13; GOTO = 14;
-	GOTOF = 15; GOTO = 16; PARAM= 17; PRINT = 18; RETURN =19; ERA = 20; GOSUB = 21; READ = 22; 
+	GTREQ = 7; LSSEQ =8; EQEQ =9; ANDOP =10; OROP = 11; EQU = 12; RET = 13; GOTOV = 14;
+	GOTOF = 15; GOTO = 16; PARAM= 17; PRINT = 18; RETURN =19; ERA = 20; GOSUB = 21; READ = 22; END = 23;
 	
 	numproc=0;
 	MemGlobal.mint = 1000;
@@ -428,6 +466,7 @@ matematrix = (. wchar_t* name; InitDeclarations(); .) "program" Ident<name>  (.
 	rellenar(goo,cont_cuadruple);
 
 .) bloque (.
+	buildCuadrupleM(END,-1,-1,-1);
 	st.printLista();
 	printCuadruplos();
 .).
@@ -447,20 +486,35 @@ tipo<int &type>
 
 var_cte (.int n1;float m1;bool b1;wchar_t *s1;.) = ( number (. 
 	swscanf(t->val, L"%d", &n1);
+	ct.tempconst = MemConst.mint;
 	//cout << n1 << " es dirV " << MemConst.mint << endl; 
 	MemConst.mint = ct.insertaInt(MemConst.mint,11000,n1);
+	ct.constTipo = 0;
+	conti++;
 .)  | flotante (. 
 	swscanf(t->val, L"%f", &m1); 
+	ct.tempconst = MemConst.mfloat;
 	MemConst.mfloat = ct.insertaBoolean(MemConst.mfloat,12000, m1);
+	ct.constTipo = 1;
+	contf++;
 .) | "true" (. 
 	b1 = true;
+	ct.tempconst = MemConst.mboolean;
 	MemConst.mboolean = ct.insertaBoolean(MemConst.mboolean,14000, b1);
+	ct.constTipo = 3;
+	contb++;
 .) | "false" (. 
 	b1 = false; 
+	ct.tempconst = MemConst.mboolean;
 	MemConst.mboolean = ct.insertaBoolean(MemConst.mboolean,14000, b1);
+	ct.constTipo = 3;
+	contb++;
 .) | string (. 
 	s1 = coco_string_create(t->val); 
+	ct.tempconst = MemConst.mstring;
 	MemConst.mstring = ct.insertaBoolean(MemConst.mstring,13000, s1);
+	ct.constTipo = 2;
+	conts++;
 .)  | imaginario ).
 
 bloque = '{' [ estatuto { estatuto } ] '}'.
@@ -749,7 +803,12 @@ factor = (. wchar_t* name; .)  ( Ident<name> (.
 	PTipos.push(st.temptipo);
 
 .)
-[ ( index  | '(' expresion ')' ) ]| llamadaFuncE  | var_cte | '(' (. POperadores.push(-9999); .) exp')' (. 
+[ ( index  | '(' expresion ')' ) ]| llamadaFuncE  | var_cte (.
+
+	POperandos.push(ct.tempconst);
+	PTipos.push(ct.constTipo);
+
+.) | '(' (. POperadores.push(-9999); .) exp')' (. 
 	if( POperadores.top() == -9999) {
 		POperadores.pop(); 
 	} else {
