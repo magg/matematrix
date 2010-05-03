@@ -49,6 +49,10 @@ int // opcodes
 
 int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,conti,contf,contb,conts,numdim;  //Variables utilizadas para generar cuadruplos.
 
+int *m;
+int R;
+int *ls;
+
 stack<int> PTipos;
 stack<int> POperadores;
 stack<int> POperandos;
@@ -391,7 +395,7 @@ void InitDeclarations() { // it must exist
 	var = 0; def = 1; // object kinds
 
 	cont_cuadruple=1;	
-	numdim=0;	
+	numdim=0;R=1;	
 	conti=0;contf=0;contb=0;conts=0;
 
 	// opcodes
@@ -673,35 +677,97 @@ varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (.
 
 }
 //PDimensiones.push(-1);
+.) ['['(.
+	R = 1;
+	st.tempnumarr=1;
+	st.agregaDim(numproc,st.tempnumarr, name); 
+	numdim++; 
+.) number(.
+	int n1;
+	swscanf(t->val, L"%d", &n1);
+	if (n1 < 1) {
+		(L"La constante debe ser mayor que 0.");
+	} else { 
+		st.newTablaDesc(numproc,-1,-1,-1,st.tempnumarr);
+		st.almacenaConsArr(st.tempnumarr,numdim,n1-1);
+		R = n1* R;	
+		PDimensiones.push(n1);
+	}
 .)
-['['
-(. numdim++; .)
-number(.
-int n1;
-swscanf(t->val, L"%d", &n1);
-if (n1 < 1) (L"La constante debe ser mayor que 0.");
-else PDimensiones.push(n1);.)
-']'
-{'[' 
-(. numdim++; .)
-number(.
-int n1;
-swscanf(t->val, L"%d", &n1);
-if (n1 < 1) (L"La constante debe ser mayor que 0.");
-else PDimensiones.push(n1);.)
-']'}
-(. 
-int R,numtemp, i;
-R=0;
-numtemp = 1;
-i=numdim;
-while (numtemp <= numdim ){
-//st.newTablaDesc(numproc,-1,-1,-1);
-numtemp++;
-}
-cout << "numero de procedimiento arreglo" << numproc << endl;.)
-]
+']'{'[' (. 
+	numdim++; 
+.)number(.
+	int n1;
+	swscanf(t->val, L"%d", &n1);
+	if (n1 < 1) {
+		(L"La constante debe ser mayor que 0.");
+	} else { 
+		st.newTablaDesc(numproc,-1,-1,-1,st.tempnumarr);
+		st.almacenaConsArr(st.tempnumarr,numdim,n1-1);	
+		R = n1*R;	
+		PDimensiones.push(n1);
+		PDimensiones.push(n1);
+	}
+.)']'} (.
 
+	m = (int *) malloc (numdim * sizeof(int)); 
+	m = new int [numdim];
+	int K;
+	K = st.loopDim(R,numdim,m,st.tempnumarr);
+	free(m); 
+	st.printArr(); st.tempnumarr++;
+	switch(numproc){
+	case 0:
+		switch(type) {
+			case 0:
+				MemGlobal.mint = MemGlobal.mint + K;
+			break;
+			case 1:
+				MemGlobal.mfloat = MemGlobal.mfloat + K;
+			break;
+			case 2:
+				MemGlobal.mstring = MemGlobal.mstring + K;
+			break;
+			case 3:
+				MemGlobal.mboolean = MemGlobal.mboolean + K;
+			break;
+			case 4:
+				MemGlobal.mcomplex = MemGlobal.mcomplex + K;
+			break;
+			default:
+				MemGlobal.mint = MemGlobal.mint + K;
+		}
+	break;
+	default:
+		switch(type) {
+			case 0:
+				MemLoc.mint = MemLoc.mint + K;
+			break;
+			case 1:
+				MemLoc.mfloat = MemLoc.mfloat + K;
+			break;
+			case 2:
+				MemLoc.mstring = MemLoc.mstring + K;
+			break;
+			case 3:
+				MemLoc.mboolean = MemLoc.mboolean + K;
+			break;
+			case 4:
+				MemLoc.mcomplex = MemLoc.mcomplex + K;
+			break;
+			default:
+				MemLoc.mint = MemLoc.mint + K;
+		}
+	}
+
+
+
+
+
+
+
+
+ .) ] 
 /*
 PDimensiones.top();
 Lsdim=PDimensiones.top()-1;

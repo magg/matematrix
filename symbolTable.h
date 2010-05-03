@@ -146,7 +146,7 @@ intTable in; floatTable fn; boolTable bn; stringTable sn;
 class symbolTable {
 public:
 
-int temptipo, tempdir, temptipop, tempnumproc; 
+int temptipo, tempdir, temptipop, tempnumproc, tempnumarr;
 
 typedef struct {
 	int lsup;
@@ -158,7 +158,7 @@ typedef struct {
 	wchar_t* name;
 	int tipo;
 	int dirV;
-	list<tablaArr> dim;
+	int key;
 } tablaVars;
 
 typedef struct {
@@ -177,7 +177,12 @@ typedef struct {
 	list<tablaParam> param;
 } dirProc;
 
+typedef struct {
+	list<tablaArr> dim;
+} dArr;
+
 unordered_map<int, dirProc> hmap;
+unordered_map<int, dArr> hdim;
 
 void insertaDirProc(int a, int type, wchar_t* name, int m){
 	dirProc x;
@@ -231,25 +236,110 @@ switch(tipo) {
 return m+1;
 }
 
-void newTablaDesc(int a, int inf, int sup, int k){
+
+void agregaDim(int a,int llave, wchar_t* name){
+	
+	list<tablaVars>::iterator p;
+	for (p=hmap[a].vars.begin(); p!=hmap[a].vars.end(); p++) {	
+		if ( wcscmp(p->name, name) == 0 ) {
+			p->key = llave;
+		} 
+	}
+
+
+}
+
+void newTablaDesc(int a, int inf, int sup, int k, int llave){
+
 	tablaArr x;
 	x.lsup = sup;
 	x.linf = inf;
 	x.m = k;
-	//hmap[a].vars.dim.push_back(x);
+	hdim[llave].dim.push_back(x);
+
+}
+
+void printArr(){
+
+list<tablaArr>::iterator p;
+for(unordered_map<int, dArr>::iterator tt = hdim.begin(); tt != hdim.end(); tt++){
+	cout << (*tt).first;
+	for (p=(*tt).second.dim.begin(); p!=(*tt).second.dim.end(); p++) {
+		cout << " => ("<< p->linf << "," << p->lsup << "," << p->m << " )" <<endl;
+	}
+}
+
+}
+
+void almacenaConsArr(int a, int m, int n){
+
+list<tablaArr>::iterator p;
+int i = 1;
+for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
+		if (i == m){
+			p->linf = 0; 
+			p->lsup = n;
+		} else {
+			i++;
+		}
+	}
+
+}
+
+int dameSup(int a, int m){
+
+int k=0; 
+
+list<tablaArr>::iterator p;
+int i = 1;
+for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
+		if (i == m){ 
+			k = p->lsup;
+		} else {
+			i++;
+		}
+	}
+
+return k;
+
+}
+
+void almacenaK(int a, int m, int k){
+
+list<tablaArr>::iterator p;
+int i = 1;
+
+for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
+		if (i == m){
+			p->m = k;
+		} else {
+			i++;
+		}
+	}
 }
 
 
-int newTablaVarArr(int a, int tipo, wchar_t* nombre, int m){
+int loopDim(int R, int numdim, int *m, int a) {
 
-tablaVars x;
+int dim = 1;
+int suma = 0;
+int aux = R;
+int K;
+int ls;
+	while(dim < numdim){
+		ls = dameSup(a,dim);
+		m[dim-1] = R / (ls + 1);
+		R = m[dim-1];   
+		suma = suma * m[dim-1];
+		almacenaK(a, dim, m[dim-1]);
+		dim++;
+	}
+	K = suma;
+	K = -1*K;	
+	almacenaK(a, dim, K);
 
-return m;
+return aux-1;
 }
-
-
-
-
 
 bool checaTablaVars(int a, int tipo, wchar_t* nombre){
 
@@ -267,7 +357,6 @@ bool b = false;
 	}
 return b;
 }
-
 
 int newTablaParam(int a, int tipo, wchar_t* nombre, int m){
 		tablaParam x;

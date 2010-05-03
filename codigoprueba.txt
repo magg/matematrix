@@ -3,7 +3,8 @@ var
 int a;
 float b;
 int g;
-int x;
+int kk[8][8];
+int mike;
 end
 
 def void funcion(int c) { 		
