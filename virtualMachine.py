@@ -37,6 +37,7 @@ class virtualMachine(object):
 		
 		self.dict = {}
 		self.PExe = []
+		self.PCuadruplo = []
 		self.cuadruplo = 0
 		f = open('/home/magg/matematrix/trunk/cuadruplos.matrix', 'r')
 		line = f.readlines()
@@ -81,8 +82,19 @@ class virtualMachine(object):
 			x4 = int(lista[3])
 			x5 = int(lista[4])
 			self.dict[x1] = (x2,x3,x4,x5)
-		for n, (op, opdo1, opdo2, res) in self.dict.items():
-			self.interpret(n,op, opdo1, opdo2, res)		
+		L = self.dict.keys()
+		n = len(L)
+		self.cuadruplo = 1	
+		self.flag = False	
+		while self.cuadruplo <= n:
+			if self.flag != True:
+				(op,opdo1,opdo2,res) = self.dict[self.cuadruplo]
+				self.interpret(op,opdo1,opdo2,res)
+			else: 
+				break
+		##for n, (op, opdo1, opdo2, res) in self.dict.items():
+			#self.cuadruplo = n
+			#self.interpret(n, op, opdo1, opdo2, res)		
 	
 	def interpret(self,x,y,z,w):
 		switch = {
@@ -248,7 +260,7 @@ class virtualMachine(object):
 			 self.memLoc.memString(a-self.memLoc.mstring,s)
 		if a >= 23000 and a < 24000:
 			 self.memLoc.memBoolean(a-self.memLoc.mboolean,s)
-	
+
 	def memAss(self, b, s):
 		if b >= 1000 and b < 2000:
 			y = self.memGlobal.getInt(b-self.memGlobal.mint)
@@ -300,7 +312,7 @@ class virtualMachine(object):
 			self.memAdd(s,y)	
 
 
-	def memPrint(self, b, s):
+	def memPrint(self, b):
 		if b >= 1000 and b < 2000:
 			y = self.memGlobal.getInt(b-self.memGlobal.mint)
 			print y
@@ -350,8 +362,8 @@ class virtualMachine(object):
 			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
 			print y
 
-	def funcFalso(b):
-	i	if b >= 4000 and b < 5000:
+	def funcFalso(self,b):
+		if b >= 4000 and b < 5000:
 			y = self.memGlobal.getBoolean(b-self.memGlobal.mboolean)
 		if b >= 9000 and b < 10000:
 			y = self.memTemp.getBoolean(b-self.memTemp.mboolean)
@@ -361,109 +373,202 @@ class virtualMachine(object):
 			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
 		return y
 
+	def memPar(self, b, s):
+		if a >= 20000 and a < 21000:
+			 self.memParam.memInt(a-self.memParam.mint,s)
+		if a >= 21000 and a < 22000:
+			 self.memParam.memFloat(a-self.memParam.mfloat,s)
+		if a >= 22000 and a < 23000:
+			 self.memParam.memString(a-self.memParam.mstring,s)
+		if a >= 23000 and a < 24000:
+			 self.memParam.memBoolean(a-self.memParam.mboolean,s)
+
+	def memAsp(self, b, s):
+		if b >= 1000 and b < 2000:
+			y = self.memGlobal.getInt(b-self.memGlobal.mint)
+			self.memPar(s,y)
+		if b >= 2000 and b < 3000:
+			y = self.memGlobal.getFloat(b-self.memGlobal.mfloat)
+			self.memPar(s,y)
+		if b >= 3000 and b < 4000:
+			y = self.memGlobal.getString(b-self.memGlobal.mstring)
+			self.memPar(s,y)
+		if b >= 4000 and b < 5000:
+			y = self.memGlobal.getBoolean(b-self.memGlobal.mboolean)
+			self.memPar(s,y)
+		if b >= 6000 and b < 7000:
+			y = self.memTemp.getInt(b-self.memTemp.mint)
+			self.memPar(s,y)
+		if b >= 7000 and b < 8000:
+			y = self.memTemp.getFloat(b-self.memTemp.mfloat)
+			self.memPar(s,y)
+		if b >= 8000 and b < 9000:
+			y = self.memTemp.getString(b-self.memTemp.mstring)
+			self.memPar(s,y)
+		if b >= 9000 and b < 10000:
+			y = self.memTemp.getBoolean(b-self.memTemp.mboolean)
+			self.memPar(s,y)
+		if b >= 11000 and b < 12000:
+			y = self.memConst.getInt(b-self.memConst.mint)
+			self.memPar(s,y)
+		if b >= 12000 and b < 13000:
+			y = self.memConst.getFloat(b-self.memConst.mfloat)
+			self.memPar(s,y)
+		if b >= 13000 and b < 14000:
+			y = self.memConst.getString(b-self.memConst.mstring)
+			self.memPar(s,y)
+		if b >= 14000 and b < 15000:
+			y = self.memConst.getBoolean(b-self.memConst.mboolean)
+			self.memPar(s,y)	
+		if b >= 20000 and b < 21000:
+			y = self.memLoc.getInt(b-self.memLoc.mint)
+			self.memPar(s,y)
+		if b >= 21000 and b < 22000:
+			y = self.memLoc.getFloat(b-self.memLoc.mfloat)
+			self.memPar(s,y)
+		if b >= 22000 and b < 23000:
+			y = self.memLoc.getString(b-self.memLoc.mstring)
+			self.memPar(s,y)
+		if b >= 23000 and b < 24000:
+			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
+			self.memPar(s,y)	
+
+
 	def suma(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a + b
 		self.memAdd(res, s)
 
 	def resta(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a - b
 		self.memAdd(res, s)
 
 	def mul(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a * b            
 		self.memAdd(res, s)
 
 	def div(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a / b            
 		self.memAdd(res, s)
 
 	def diff(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a != b
 		self.memAdd(res, s)
 
 	def great(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a > b
 		self.memAdd(res, s)
 
 	def less(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a < b
 		self.memAdd(res, s)
 
 	def greateq(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a >= b
 		self.memAdd(res, s)
 
 	def lesseq(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a <= b
 		self.memAdd(res, s)
 
 	def equaleq(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a == b
 		self.memAdd(res, s)
 
 	def andop(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a and b
 		self.memAdd(res, s, opdo2)
 
 	def orop(self, opdo1, opdo2, res):
+		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
 		s = a or b
 		self.memAdd(res, s)
 
 	def equ(self, opdo1, opdo2, res):
+		self.cuadruplo+=1	
 		self.memAss(opdo2,res)
 
 	def ret(self, opdo1, opdo2, res):
-		print "ret"
+		del self.memLoc.memTablei[:]  
+		del self.memLoc.memTablef[:]
+		del self.memLoc.memTableb[:]
+		del self.memLoc.memTables[:]
+		p_cuadruplo= self.PCuadruplo.pop()
+		self.cuadruplo = p_cuadruplo
+		self.memLoc = self.PExe.pop()
 
 	def gotov(self, opdo1, opdo2, res):
-		b = funcFalso(res)
+		b = self.funcFalso(opdo1)
 		if b == True:
 			self.cuadruplo = res
 		else: 
 			self.cuadruplo+=1
 
 	def gotof(self, opdo1, opdo2, res):
-		b = funcFalso(res)
+		b = self.funcFalso(opdo1)
 		if b == False:
 			self.cuadruplo = res
 		else: 
 			self.cuadruplo+=1
 
 	def goto(self, opdo1, opdo2, res):
-		self.cuadruplo = self.dict[self.cuadruplo][3]
+		self.cuadruplo = res
 
 	def param(self, opdo1, opdo2, res):
-		print "param"
+		self.cuadruplo+=1
+		self.memAsp(opdo1,res)
 
 	def printf(self, opdo1, opdo2, res):
-		memPrint(opdo1)
+		self.cuadruplo+=1
+		self.memPrint(opdo1)
 
 	def returnf(self, opdo1, opdo2, res):
 		print "returnf"
 
 	def era(self, opdo1, opdo2, res):
 		self.cuadruplo+=1
+		self.memParam = memoriaVirtual()	
 
 	def gosub(self, opdo1, opdo2, res):
-		print "gosub"
+		self.PExe.append(self.memLoc)
+		self.cuadruplo+=1
+		self.PCuadruplo.append(self.cuadruplo)
+		del self.memLoc.memTablei[:]  
+		del self.memLoc.memTablef[:]
+		del self.memLoc.memTableb[:]
+		del self.memLoc.memTables[:]
+		self.memLoc.memTablei = self.memParam.memTablei
+		self.memLoc.memTablef = self.memParam.memTablef     
+		self.memLoc.memTableb = self.memParam.memTableb   
+		self.memLoc.memTables = self.memParam.memTables          
 
 	def readf(self, opdo1, opdo2, res):
 		print "readf"
 
 	def fin(self, opdo1, opdo2, res):
-		print "end"
+		self.flag = True
 
 if __name__ == '__main__':
 	v=virtualMachine()
