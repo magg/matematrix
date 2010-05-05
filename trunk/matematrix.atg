@@ -48,7 +48,7 @@ int // opcodes
 	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM, END,
 	  PM, SQRT, POW, DIST, ECU, SIN, CSC, COS, COT, TAN, SEC,VERF;
 
-int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,conti,contf,contb,conts,numdim,idArr, dimactual, templlave,tempbase, tempfor;  //Variables utilizadas para generar cuadruplos.
+int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,conti,contf,contb,conts,numdim,idArr, dimactual, templlave,tempbase, tempfor, llenar1,llenar2,llenar3,llenar4;  //Variables utilizadas para generar cuadruplos.
 
 int *m;
 int R;
@@ -213,7 +213,9 @@ cout << "1er cuadruplo" << cont_cuadruple << endl;
 		x.res = -1;
 		hasht[cont_cuadruple] = x;
 		cont_cuadruple++;
+cout << "antes " << PSaltos.top() << endl;
 		PSaltos.push((cont_cuadruple-1));
+cout << "despues " << PSaltos.top() << endl;
 	} else {
 		cout << "Semantic error: Type mismatch" << endl;
 
@@ -270,6 +272,30 @@ void buildCuadrupleM(int a, int b, int c, int d){
 	cont_cuadruple++;
 
 }
+void buildCuadrupleF(int a, int b, int c, int d){
+cuadruplos x;
+	x.op = a;
+	x.opdo1 = b;
+	x.opdo2 = c;
+	x.res = d;
+	hasht[cont_cuadruple] = x;
+	PSaltos.push(cont_cuadruple+1);
+	PSaltos.push(cont_cuadruple-2);
+	cont_cuadruple++;
+}
+
+void buildCuadrupleF2(int a, int b, int c, int d){
+cuadruplos x;
+	x.op = a;
+	x.opdo1 = b;
+	x.opdo2 = c;
+	x.res = d;
+	hasht[cont_cuadruple] = x;
+	PSaltos.push(cont_cuadruple+1);
+	cont_cuadruple++;
+}
+
+
 //genera cuadruplos del for
 void buildCuadrupleFOR(){
 	int temp, temp2;
@@ -1515,17 +1541,40 @@ ciclowhile = "while" (.
 .).
 //Acciones para generar cuadruplos de FOR
 ciclofor = (. wchar_t* name; .)  "for" '(' asignacion expresion(.
-	buildCuadrupleFOR();
-	tempfor=asact;
-	cout << "TemporalFOR " << tempfor << endl;
+llenar1=0; llenar2=0; llenar3=0; llenar4=0;
+//buildCuadrupleFOR();
+tempfor=asact;
+cout << "TemporalFOR " << tempfor << endl;
+buildCuadrupleM(GOTOF,POperandos.top(),-1,-1);
+llenar1=cont_cuadruple-1;
+buildCuadrupleF(GOTO,-1,-1,-1);
+llenar2=cont_cuadruple-1;	
+buildCuadrupleM(ADD,tempfor,1,tempfor);
+//buildCuadrupleI();
+buildCuadrupleF2(GOTO,-1,-1,-1);
+llenar3=cont_cuadruple-1;
+
 .) ')' bloque (.
 //cout << "salio bloque" << endl;
+buildCuadrupleF2(GOTO,-1,-1,-1);
+llenar4=cont_cuadruple-1;
+rellenar(llenar1,PSaltos.top());
+PSaltos.pop();
+rellenar(llenar2,PSaltos.top());
+PSaltos.pop();
+rellenar(llenar3,PSaltos.top());
+PSaltos.pop();
+rellenar(llenar4,PSaltos.top());
+PSaltos.pop();
+
+/*
 	buildCuadrupleM(ADD,tempfor,1,tempfor);
 	int retorno = PSaltos.top();
 	PSaltos.pop();
 	buildCuadrupleM(GOTO,-1,-1,retorno);
-	rellenar((retorno+1), cont_cuadruple);
 
+	rellenar((retorno+1), cont_cuadruple);
+*/
 .) .
 //Acciones para generar cuadruplos de de escritura (WRITE)
 escritura = "print" '(' exp (.
