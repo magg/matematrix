@@ -648,7 +648,9 @@ class virtualMachine(object):
 	def less(self, opdo1, opdo2, res):
 		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
+		#print a, b
 		s = a < b
+		#print s
 		self.memAdd(res, s)
 
 	def greateq(self, opdo1, opdo2, res):
@@ -659,8 +661,11 @@ class virtualMachine(object):
 
 	def lesseq(self, opdo1, opdo2, res):
 		self.cuadruplo+=1
+		print opdo1, opdo2
 		(a,b) = self.memSearch(opdo1,opdo2)
+		print a,b
 		s = a <= b
+		print s
 		self.memAdd(res, s)
 
 	def equaleq(self, opdo1, opdo2, res):
