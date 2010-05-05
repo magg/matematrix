@@ -146,7 +146,7 @@ intTable in; floatTable fn; boolTable bn; stringTable sn;
 class symbolTable {
 public:
 
-int temptipo, tempdir, temptipop, tempnumproc, tempnumarr;
+int temptipo, tempdir, temptipop, tempnumproc, tempnumarr, tempdim, tempdimfinal;
 
 typedef struct {
 	int lsup;
@@ -203,39 +203,60 @@ tablaVars x;
 
 switch(tipo) {
 	case 0:
-		x.name = nombre; x.tipo = tipo; x.dirV = m;
+		x.name = nombre; x.tipo = tipo; x.dirV = m; x.key= -1;
 		hmap[a].vars.push_back(x);
 		hmap[a].tam.vContI = hmap[a].tam.vContI + 1;
 		
 	break;
 	case 1:
-		x.name = nombre; x.tipo = tipo; x.dirV = m;
+		x.name = nombre; x.tipo = tipo; x.dirV = m; x.key= -1;
 		hmap[a].vars.push_back(x);
 		hmap[a].tam.vContF+=1;
 	break;
 	case 2:
-		x.name = nombre; x.tipo = tipo; x.dirV = m;
+		x.name = nombre; x.tipo = tipo; x.dirV = m; x.key= -1;
 		hmap[a].vars.push_back(x);
 		hmap[a].tam.vContS+=1;
 	break;
 	case 3:
-		x.name = nombre; x.tipo = tipo; x.dirV = m;
+		x.name = nombre; x.tipo = tipo; x.dirV = m; x.key= -1;
 		hmap[a].vars.push_back(x);
 		hmap[a].tam.vContB+=1;
 	break;
 	case 4:
-		x.name = nombre; x.tipo = tipo; x.dirV = m;
+		x.name = nombre; x.tipo = tipo; x.dirV = m; x.key= -1;
 		hmap[a].vars.push_back(x);
 		hmap[a].tam.vContC+=1;
 	break;
 	default:
-		x.name = nombre; x.tipo = tipo; x.dirV = m;
+		x.name = nombre; x.tipo = tipo; x.dirV = m; x.key= -1;
 		hmap[a].vars.push_back(x);
 }
 
 return m+1;
 }
 
+
+int returnParamK(int a, int k){
+			list<tablaParam>::iterator q;
+			int i = 1;
+			int dir=0;	
+			for (q=hmap[a].param.begin(); q!=hmap[a].param.end(); q++) {	
+				if ( i == k ) {
+					dir = q->dirV;				
+				} else {
+					i++;
+				}
+
+			}
+
+return dir;
+}
+
+int buscaDirInicio(int a){
+
+return hmap[a].dirI;
+}
 
 void agregaDim(int a,int llave, wchar_t* name){
 	
@@ -271,6 +292,33 @@ for(unordered_map<int, dArr>::iterator tt = hdim.begin(); tt != hdim.end(); tt++
 
 }
 
+bool checaNulo(int a, int m){
+cout << "valor de m en checa nulo" << m <<  endl;
+int i = 1;
+bool b = false;
+list<tablaArr>::iterator p;
+	for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
+		if (i == m){ 
+			if (p!=hdim[a].dim.end()){
+			b=true;
+			cout << "entre a checa nulo b es true" << endl;
+			}
+		}
+	i++;
+	}
+return b;
+}
+
+
+int getDim(int a){
+int i = 0;
+list<tablaArr>::iterator p;
+	for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
+		i++;
+	}
+return i;
+}
+
 void almacenaConsArr(int a, int m, int n){
 
 list<tablaArr>::iterator p;
@@ -295,11 +343,25 @@ int i = 1;
 for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
 		if (i == m){ 
 			k = p->lsup;
-		} else {
-			i++;
 		}
+	i++;
 	}
 
+return k;
+
+}
+
+int dameM(int a, int m){
+int k=0;
+list<tablaArr>::iterator p;
+int i = 1;
+for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
+		if (i == m){ 
+
+			k = p->m;
+		} 
+	i++;
+	}
 return k;
 
 }
@@ -330,12 +392,13 @@ int ls;
 		ls = dameSup(a,dim);
 		m[dim-1] = R / (ls + 1);
 		R = m[dim-1];   
-		suma = suma * m[dim-1];
+		suma = suma + 0 * m[dim-1];
 		almacenaK(a, dim, m[dim-1]);
 		dim++;
 	}
 	K = suma;
-	K = -1*K;	
+	K = -1*K;
+	cout << dim << endl;	
 	almacenaK(a, dim, K);
 
 return aux-1;
@@ -357,6 +420,8 @@ bool b = false;
 	}
 return b;
 }
+
+
 
 int newTablaParam(int a, int tipo, wchar_t* nombre, int m){
 		tablaParam x;
@@ -501,6 +566,7 @@ int b = 0;
 			b = 1;
 			temptipo = p->tipo;
 			tempdir = p->dirV;
+			tempdim = p->key;
 		} 
 	}
 
@@ -512,6 +578,7 @@ if (b == 0){
 					//cout << "entro al if dentro del for 2" << endl;
 					temptipo = q->tipo;
 					tempdir = q->dirV;
+					tempdim = p->key;
 					b = 1;					
 				}  
 
@@ -524,7 +591,8 @@ if (b == 0){
 				if ( wcscmp(p->name, name) == 0 ) {
 					//cout << "entro al if dentro del for 3" << endl;
 					temptipo = p->tipo;
-					tempdir = p->dirV;					
+					tempdir = p->dirV;
+					tempdim = p->key;					
 				} 
 	}
 
@@ -552,7 +620,7 @@ void printLista(){
 	for (p=(*it).second.vars.begin(); p!=(*it).second.vars.end(); p++) {
 		cout << " (" ;
 		wcout << p->name << ", " ;
-		cout << p->tipo << ", " << p->dirV << ") " ;
+		cout << p->tipo << ", " << p->dirV << ", " << p->key << ") " ;
 	}
 	cout << " ]";
 	cout << ", " << "{ ";
