@@ -1,34 +1,18 @@
 program test;
 var 
-int a;
-float b;
+int a[5];
 int g;
-int kk[8][8];
-int mike;
 end
 
-def void funcion(int c) { 		
-var 
-int d;
-end	
-	if(a < x){
-		a = d * x;
-	} else {
-		a= d;
-	}
-a= 8000+8004;
-}
-
-def void funcio1(int c) { 		
-var 
+def int funcion(int c){
+var
 int f;
-end	
-(funcion(a));
-while(g < a){
-		a = d * x;
-	}
+end
+
 }
 
 main {
-	
-}	
+
+g = <funcion(5)>;
+
+}

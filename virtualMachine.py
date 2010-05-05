@@ -10,33 +10,40 @@ class virtualMachine(object):
 		self.memTemp = memoriaVirtual()
 		self.memConst = memoriaVirtual()
 		self.memLoc = memoriaVirtual()
+		self.memPoint = memoriaVirtual()
 		self.initialize()
 
 	def initialize(self):
 		self.memGlobal.mint = 1000
-		self.memGlobal.mfloat = 2000;
-		self.memGlobal.mstring = 3000;
-		self.memGlobal.mboolean = 4000;
-		#self.memGlobal.mcomplex = 5000;
+		self.memGlobal.mfloat = 2000
+		self.memGlobal.mstring = 3000
+		self.memGlobal.mboolean = 4000
+		self.memGlobal.mcomplex = 5000
 
-		self.memTemp.mint = 6000;
-		self.memTemp.mfloat = 7000;
-		self.memTemp.mstring = 8000;
-		self.memTemp.mboolean = 9000;
-		#memTemp.mcomplex = 10000;
+		self.memTemp.mint = 6000
+		self.memTemp.mfloat = 7000
+		self.memTemp.mstring = 8000
+		self.memTemp.mboolean = 9000
+		self.memTemp.mcomplex = 10000
 
-		self.memConst.mint = 11000;
-		self.memConst.mfloat = 12000;
-		self.memConst.mstring = 13000;
-		self.memConst.mboolean = 14000;
-		#memConst.mcomplex = 15000;
+		self.memConst.mint = 11000
+		self.memConst.mfloat = 12000
+		self.memConst.mstring = 13000
+		self.memConst.mboolean = 14000
+		self.memConst.mcomplex = 15000
 		
-		self.memLoc.mint = 20000;
-		self.memLoc.mfloat = 21000;
-		self.memLoc.mstring = 22000;
-		self.memLoc.mboolean = 23000;
-		#self.memLoc.mcomplex = 25000;
+		self.memLoc.mint = 20000
+		self.memLoc.mfloat = 21000
+		self.memLoc.mstring = 22000
+		self.memLoc.mboolean = 23000
+		self.memLoc.mcomplex = 25000
 		
+		self.memPoint.mint = 26000
+		self.memPoint.mfloat=27000
+		self.memPoint.mstring=28000
+		self.memPoint.mboolean=29000
+		self.memPoint.mcomplex=30000
+
 		self.dict = {}
 		self.PExe = []
 		self.PCuadruplo = []
@@ -123,7 +130,19 @@ class virtualMachine(object):
 			20 : self.era,
 			21 : self.gosub,
 			22 : self.readf,
-			23 : self.fin
+			23 : self.fin,
+			24 : self.pm,
+			25 : self.sqrt,
+			26 : self.poww,
+			27 : self.dist,
+			28 : self.ecu,
+			29 : self.sin,
+			30 : self.csc,
+			31 : self.cos,
+			32 : self.cot,
+			33 : self.tan,
+			34 : self.sec,
+			40 : self.verf
 			}
 		if x in switch:
      			switch[x](y,z,w)
@@ -131,6 +150,7 @@ class virtualMachine(object):
      			pass
         
 	def memSearch(self, a, b):
+		y = 0
 		if a >= 1000 and a < 2000:
 			x = self.memGlobal.getInt(a - self.memGlobal.mint)
 			t1 = 0
@@ -178,6 +198,18 @@ class virtualMachine(object):
 			t1 = 2
 		if a >= 23000 and a < 24000:
 			x = self.memLoc.getBoolean(a-self.memLoc.mboolean)
+			t1 = 3
+		if a >= 26000 and a < 27000:
+			x = self.memPoint.getInt(a-self.memPoint.mint)
+			t1 = 0
+		if a >= 27000 and a < 28000:
+			x = self.memPoint.getFloat(a-self.memPoint.mfloat)
+			t1 = 1
+		if a >= 28000 and a < 29000:
+			x = self.memPoint.getString(a-self.memPoint.mstring)
+			t1 = 2
+		if a >= 29000 and a < 30000:
+			x = self.memPoint.getBoolean(a-self.memPoint.mboolean)
 			t1 = 3
 		if b >= 1000 and b < 2000:
 			y = self.memGlobal.getInt(b-self.memGlobal.mint)
@@ -227,41 +259,61 @@ class virtualMachine(object):
 		if b >= 23000 and b < 24000:
 			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
 			t2 = 3
+		if b >= 26000 and b < 27000:
+			y = self.memPoint.getInt(b-self.memPoint.mint)
+			t1 = 0
+		if b >= 27000 and b < 28000:
+			y = self.memPoint.getFloat(b-self.memPoint.mfloat)
+			t1 = 1
+		if b >= 28000 and b < 29000:
+			y = self.memPoint.getString(b-self.memPoint.mstring)
+			t1 = 2
+		if b >= 29000 and b < 30000:
+			y = self.memPoint.getBoolean(b-self.memPoint.mboolean)
+			t1 = 3
 		return (x,y)
 
 	def memAdd(self,a,s):
 		if a >= 1000 and a < 2000:
-			 self.memGlobal.memInt(a-self.memGlobal.mint,s)
+			self.memGlobal.memInt(a-self.memGlobal.mint,s)
 		if a >= 2000 and a < 3000:
-			 self.memGlobal.memFloat(a-self.memGlobal.mfloat,s)
+			self.memGlobal.memFloat(a-self.memGlobal.mfloat,s)
 		if a >= 3000 and a < 4000:
-			 self.memGlobal.memString(a-self.memGlobal.mstring,s)
+			self.memGlobal.memString(a-self.memGlobal.mstring,s)
 		if a >= 4000 and a < 5000:
-			 self.memGlobal.memBoolean(a-self.memGlobal.mboolean,s)
+			self.memGlobal.memBoolean(a-self.memGlobal.mboolean,s)
 		if a >= 6000 and a < 7000:
-			 self.memTemp.memInt(a-self.memTemp.mint,s)
+			self.memTemp.memInt(a-self.memTemp.mint,s)
 		if a >= 7000 and a < 8000:
-			 self.memTemp.memFloat(a-self.memTemp.mfloat,s)
+			self.memTemp.memFloat(a-self.memTemp.mfloat,s)
 		if a >= 8000 and a < 9000:
-			 self.memTemp.memString(a-self.memTemp.mstring,s)
+			self.memTemp.memString(a-self.memTemp.mstring,s)
 		if a >= 9000 and a < 10000:
-			 self.memTemp.memBoolean(a-self.memTemp.mboolean,s)
+			self.memTemp.memBoolean(a-self.memTemp.mboolean,s)
 		if a >= 11000 and a < 12000:
-			 self.memConst.memInt(a-self.memConst.mint,s)
+			self.memConst.memInt(a-self.memConst.mint,s)
 		if a >= 12000 and a < 13000:
-			 self.memConst.memFloat(a-self.memConst.mfloat,s)
+			self.memConst.memFloat(a-self.memConst.mfloat,s)
 		if a >= 13000 and a < 14000:
-			 self.memConst.memString(a-self.memConst.mstring,s)
+			self.memConst.memString(a-self.memConst.mstring,s)
 		if a >= 14000 and a < 15000:
-			 self.memConst.memBoolean(a-self.memConst.mboolean,s)
+			self.memConst.memBoolean(a-self.memConst.mboolean,s)
 		if a >= 20000 and a < 21000:
-			 self.memLoc.memInt(a-self.memLoc.mint,s)
+			self.memLoc.memInt(a-self.memLoc.mint,s)
 		if a >= 21000 and a < 22000:
-			 self.memLoc.memFloat(a-self.memLoc.mfloat,s)
+			self.memLoc.memFloat(a-self.memLoc.mfloat,s)
 		if a >= 22000 and a < 23000:
-			 self.memLoc.memString(a-self.memLoc.mstring,s)
+			self.memLoc.memString(a-self.memLoc.mstring,s)
 		if a >= 23000 and a < 24000:
-			 self.memLoc.memBoolean(a-self.memLoc.mboolean,s)
+			self.memLoc.memBoolean(a-self.memLoc.mboolean,s)
+		if a >= 26000 and a < 27000:
+			self.memPoint.memInt(a-self.memPoint.mint,s)
+		if a >= 27000 and a < 28000:
+			self.memPoint.memFloat(a-self.memPoint.mfloat,s)
+		if a >= 28000 and a < 29000:
+			self.memPoint.memString(a-self.memPoint.mstring,s)
+		if a >= 29000 and a < 30000:
+			self.memPoint.memBoolean(a-self.memPoint.mboolean,s)
 
 	def memAss(self, b, s):
 		if b >= 1000 and b < 2000:
@@ -311,8 +363,21 @@ class virtualMachine(object):
 			self.memAdd(s,y)
 		if b >= 23000 and b < 24000:
 			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
-			self.memAdd(s,y)	
+			self.memAdd(s,y)
+		if b >= 26000 and b < 27000:
+			y = self.memPoint.getInt(b-self.memPoint.mint)
+			self.memAdd(s,y)
+		if b >= 27000 and b < 28000:
+			y = self.memPoint.getFloat(b-self.memPoint.mfloat)
+			self.memAdd(s,y)
+		if b >= 28000 and b < 29000:
+			y = self.memPoint.getString(b-self.memPoint.mstring)
+			self.memAdd(s,y)
+		if b >= 29000 and b < 30000:
+			y = self.memPoint.getBoolean(b-self.memPoint.mboolean)
+			self.memAdd(s,y)
 
+	
 
 	def memPrint(self, b):
 		if b >= 1000 and b < 2000:
@@ -363,7 +428,18 @@ class virtualMachine(object):
 		if b >= 23000 and b < 24000:
 			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
 			print y
-
+		if b >= 26000 and b < 27000:
+			y = self.memPoint.getInt(b-self.memPoint.mint)
+			print y
+		if b >= 27000 and b < 28000:
+			y = self.memPoint.getFloat(b-self.memPoint.mfloat)
+			print y
+		if b >= 28000 and b < 29000:
+			y = self.memPoint.getString(b-self.memPoint.mstring)
+			print y
+		if b >= 29000 and b < 30000:
+			y = self.memPoint.getBoolean(b-self.memPoint.mboolean)
+			print y
 
 	def memRead(self,a,s):
 		if a >= 1000 and a < 2000:
@@ -485,12 +561,57 @@ class virtualMachine(object):
 			self.memPar(s,y)
 		if b >= 23000 and b < 24000:
 			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
-			self.memPar(s,y)	
+			self.memPar(s,y)
+		if b >= 26000 and a < 27000:
+			y = self.memPoint.getInt(b-self.memPoint.mint)
+			self.memPar(s,y)
+		if b >= 27000 and a < 28000:
+			y = self.memPoint.getFloat(b-self.memPoint.mfloat)
+			self.memPar(s,y)
+		if b >= 28000 and a < 29000:
+			y = self.memPoint.getString(b-self.memPoint.mstring)
+			self.memPar(s,y)
+		if b >= 29000 and a < 30000:
+			y = self.memPoint.getBoolean(b-self.memPoint.mboolean)
+			self.memPar(s,y)
 
-
+	def memArr(self, b, s):
+		if b >= 1000 and b < 2000:
+			y = self.memGlobal.getInt(b-self.memGlobal.mint)
+		if b >= 2000 and b < 3000:
+			y = self.memGlobal.getFloat(b-self.memGlobal.mfloat)
+		if b >= 3000 and b < 4000:
+			y = self.memGlobal.getString(b-self.memGlobal.mstring)
+		if b >= 4000 and b < 5000:
+			y = self.memGlobal.getBoolean(b-self.memGlobal.mboolean)
+		if b >= 6000 and b < 7000:
+			y = self.memTemp.getInt(b-self.memTemp.mint)
+		if b >= 7000 and b < 8000:
+			y = self.memTemp.getFloat(b-self.memTemp.mfloat)
+		if b >= 8000 and b < 9000:
+			y = self.memTemp.getString(b-self.memTemp.mstring)
+		if b >= 9000 and b < 10000:
+			y = self.memTemp.getBoolean(b-self.memTemp.mboolean)
+		if b >= 11000 and b < 12000:
+			y = self.memConst.getInt(b-self.memConst.mint)
+		if b >= 12000 and b < 13000:
+			y = self.memConst.getFloat(b-self.memConst.mfloat)
+		if b >= 13000 and b < 14000:
+			y = self.memConst.getString(b-self.memConst.mstring)
+		if b >= 14000 and b < 15000:
+			y = self.memConst.getBoolean(b-self.memConst.mboolean)
+		if b >= 20000 and b < 21000:
+			y = self.memLoc.getInt(b-self.memLoc.mint)
+		if b >= 21000 and b < 22000:
+			y = self.memLoc.getFloat(b-self.memLoc.mfloat)
+		if b >= 22000 and b < 23000:
+			y = self.memLoc.getString(b-self.memLoc.mstring)
+		if b >= 23000 and b < 24000:
+			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
+				
 	def suma(self, opdo1, opdo2, res):
 		self.cuadruplo+=1
-		(a,b) = self.memSearch(opdo1,opdo2)
+		(a,b) = self.memSearch(opdo1,opdo2)	
 		s = a + b
 		self.memAdd(res, s)
 
@@ -563,6 +684,7 @@ class virtualMachine(object):
 	def equ(self, opdo1, opdo2, res):
 		self.cuadruplo+=1	
 		self.memAss(opdo2,res)
+		#print self.memPoint.memTablei[0]
 
 	def ret(self, opdo1, opdo2, res):
 		del self.memLoc.memTablei[:]  
@@ -630,6 +752,47 @@ class virtualMachine(object):
 
 	def fin(self, opdo1, opdo2, res):
 		self.flag = True
+
+	def pm(self, opdo1, opdo2, res):
+		print "pm"
+
+	def sqrt(self, opdo1, opdo2, res):
+		print "sqrt"
+
+	def poww(self, opdo1, opdo2, res):
+		print "poww"
+
+	def dist(self, opdo1, opdo2, res):
+		print "dist"
+
+	def ecu(self, opdo1, opdo2, res):
+		print "ecu"
+
+	def sin(self, opdo1, opdo2, res):
+		print "sin"
+
+	def csc(self, opdo1, opdo2, res):
+		print "csc"
+		
+	def cos(self, opdo1, opdo2, res):
+		print "cos"
+
+	def cot(self, opdo1, opdo2, res):
+		print "cot"
+
+	def tan(self, opdo1, opdo2, res):
+		print "tan"
+
+	def sec(self, opdo1, opdo2, res):
+		print "sec"
+
+	def verf(self, opdo1, opdo2, res):
+		#print opdo1, opdo2
+		self.cuadruplo+=1
+		b = self.memArr(opdo1,res)
+		print b, opdo1, res
+		#if b < opdo2 or b > res:
+		#	print "Index out of range!"
 
 if __name__ == '__main__':
 	v=virtualMachine()
