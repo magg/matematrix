@@ -945,12 +945,15 @@ else if (dimactual > 1) {
 		PDimensiones.pop();
 }
 .)  }.
-estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | asignacion ).
+estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | asignacion | returnF ).
+returnF = "return" '(' exp ')' (.
+	buildCuadrupleM(RETURN,POperandos.top(),-1,-1);
+.) ';'.
 //llamadas = '(' (  funciones  | otras ) ')' .
 //otras = Ident<name> [index] ( asignacion | aesp ).
 //aesp = ("++" | "--" | "+=" expresion | "-=" expresion ).
 //llamadaFuncU = (. wchar_t* name; .)  Ident<name> '(' exp { ',' exp } ')' ';'.	
-funciones = '(' ( funcN | funcE ) ')' ';'.
+funciones = '<' ( funcN | funcE ) '>' ';'.
 
 funcN = (. wchar_t* name; .)  Ident<name> (.
  		if ( st.checaDirProc2(name)) {
@@ -1284,7 +1287,7 @@ factor = (. wchar_t* name; .)  ( Ident<name> (.
 	PTipos.push(st.temptipo);
 
 .)
-[ ( index  | '(' expresion ')' ) ]| llamadaFuncE  | var_cte (.
+[ ( index  | '(' expresion ')' ) ]| llamadaFuncE | funciones | var_cte (.
 
 	POperandos.push(ct.tempconst);
 	PTipos.push(ct.constTipo);
