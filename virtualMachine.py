@@ -1,4 +1,6 @@
 from memoria import memoriaVirtual
+import pickle
+import math
 
 # Se declara la clase
 class virtualMachine(object):
@@ -60,17 +62,17 @@ class virtualMachine(object):
 			x2 = int(lista1[1])
 			self.memConst.memInt(x1-11000,x2)
 		for foo2 in line2:
-			lista = foo2.split()
+			lista2 = foo2.split()
 			x1 = int(lista2[0])
 			x2 = float(lista2[1])
 			self.memConst.memFloat(x1-12000,x2)
 		for foo3 in line3:
-			lista = foo3.split()
+			lista3 = foo3.split()
 			x1 = int(lista3[0])
 			x2 = bool(lista3[1])
 			self.memConst.memBoolean(x1-14000,x2)
 		for foo4 in line4:
-			lista = foo4.split()
+			lista4 = foo4.split()
 			x1 = int(lista4[0])
 			x2 = lista4[1]
 			self.memConst.memString(x1-13000,x2)			
@@ -362,6 +364,58 @@ class virtualMachine(object):
 			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
 			print y
 
+
+	def memRead(self,a,s):
+		if a >= 1000 and a < 2000:
+			ss = int(s)
+			self.memGlobal.memInt(a-self.memGlobal.mint,ss)
+		if a >= 2000 and a < 3000:
+			ss = float(s)
+			self.memGlobal.memFloat(a-self.memGlobal.mfloat,ss)
+		if a >= 3000 and a < 4000:
+			ss = str(s)
+			self.memGlobal.memString(a-self.memGlobal.mstring,ss)
+		if a >= 4000 and a < 5000:
+			ss = bool(s)
+			self.memGlobal.memBoolean(a-self.memGlobal.mboolean,ss)
+		if a >= 6000 and a < 7000:
+			ss = int(s)
+			self.memTemp.memInt(a-self.memTemp.mint,ss)
+		if a >= 7000 and a < 8000:
+			ss = float(s)
+			self.memTemp.memFloat(a-self.memTemp.mfloat,ss)
+		if a >= 8000 and a < 9000:
+			ss = str(s)
+			self.memTemp.memString(a-self.memTemp.mstring,ss)
+		if a >= 9000 and a < 10000:
+			ss = bool(s)
+			self.memTemp.memBoolean(a-self.memTemp.mboolean,ss)
+		if a >= 11000 and a < 12000:
+			ss = int(s)
+			self.memConst.memInt(a-self.memConst.mint,ss)
+		if a >= 12000 and a < 13000:
+			ss = float(s)
+			self.memConst.memFloat(a-self.memConst.mfloat,ss)
+		if a >= 13000 and a < 14000:
+			ss = str(s)
+			self.memConst.memString(a-self.memConst.mstring,ss)
+		if a >= 14000 and a < 15000:
+			ss = bool(s)
+			self.memConst.memBoolean(a-self.memConst.mboolean,ss)
+		if a >= 20000 and a < 21000:
+			ss = int(s)
+			self.memLoc.memInt(a-self.memLoc.mint,ss)
+		if a >= 21000 and a < 22000:
+			ss = float(s)
+			self.memLoc.memFloat(a-self.memLoc.mfloat,ss)
+		if a >= 22000 and a < 23000:
+			ss = str(s)
+			self.memLoc.memString(a-self.memLoc.mstring,ss)
+		if a >= 23000 and a < 24000:
+			ss = bool(s)
+		 	self.memLoc.memBoolean(a-self.memLoc.mboolean,ss)
+
+
 	def funcFalso(self,b):
 		if b >= 4000 and b < 5000:
 			y = self.memGlobal.getBoolean(b-self.memGlobal.mboolean)
@@ -373,15 +427,15 @@ class virtualMachine(object):
 			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
 		return y
 
-	def memPar(self, b, s):
-		if a >= 20000 and a < 21000:
-			 self.memParam.memInt(a-self.memParam.mint,s)
+	def memPar(self, a, s):
+		if a >= 20000 and a < 21000: 
+			self.memParam.memInt(a-self.memParam.mint,s)
 		if a >= 21000 and a < 22000:
-			 self.memParam.memFloat(a-self.memParam.mfloat,s)
+			self.memParam.memFloat(a-self.memParam.mfloat,s)
 		if a >= 22000 and a < 23000:
-			 self.memParam.memString(a-self.memParam.mstring,s)
+			self.memParam.memString(a-self.memParam.mstring,s)
 		if a >= 23000 and a < 24000:
-			 self.memParam.memBoolean(a-self.memParam.mboolean,s)
+			self.memParam.memBoolean(a-self.memParam.mboolean,s)
 
 	def memAsp(self, b, s):
 		if b >= 1000 and b < 2000:
@@ -549,12 +603,16 @@ class virtualMachine(object):
 
 	def era(self, opdo1, opdo2, res):
 		self.cuadruplo+=1
-		self.memParam = memoriaVirtual()	
+		self.memParam = memoriaVirtual()
+		self.memParam.mint = 20000;
+		self.memParam.mfloat = 21000;
+		self.memParam.mstring = 22000;
+		self.memParam.mboolean = 23000;	
 
 	def gosub(self, opdo1, opdo2, res):
 		self.PExe.append(self.memLoc)
-		self.cuadruplo+=1
-		self.PCuadruplo.append(self.cuadruplo)
+		a = self.cuadruplo+1
+		self.PCuadruplo.append(a)
 		del self.memLoc.memTablei[:]  
 		del self.memLoc.memTablef[:]
 		del self.memLoc.memTableb[:]
@@ -562,10 +620,13 @@ class virtualMachine(object):
 		self.memLoc.memTablei = self.memParam.memTablei
 		self.memLoc.memTablef = self.memParam.memTablef     
 		self.memLoc.memTableb = self.memParam.memTableb   
-		self.memLoc.memTables = self.memParam.memTables          
+		self.memLoc.memTables = self.memParam.memTables    
+		self.cuadruplo=opdo1      
 
 	def readf(self, opdo1, opdo2, res):
-		print "readf"
+		self.cuadruplo+=1
+		resp = raw_input("Dame entrada ")
+		self.memRead(opdo1,resp)
 
 	def fin(self, opdo1, opdo2, res):
 		self.flag = True
