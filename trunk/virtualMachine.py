@@ -1,6 +1,5 @@
+# se importa la clase de memoria para el manejo de memoria 
 from memoria import memoriaVirtual
-import pickle
-import math
 
 # Se declara la clase
 class virtualMachine(object):
@@ -12,7 +11,8 @@ class virtualMachine(object):
 		self.memLoc = memoriaVirtual()
 		self.memPoint = memoriaVirtual()
 		self.initialize()
-
+	
+	#funcion que iniciliza todas las variables globales y carga los archivos de cuadruplos y de constantes
 	def initialize(self):
 		self.memGlobal.mint = 1000
 		self.memGlobal.mfloat = 2000
@@ -94,17 +94,18 @@ class virtualMachine(object):
 		L = self.dict.keys()
 		n = len(L)
 		self.cuadruplo = 1	
-		self.flag = False	
+		self.flag = False
+		#ciclo pricipal que recorre los cuadruplos	
 		while self.cuadruplo <= n:
 			if self.flag != True:
 				(op,opdo1,opdo2,res) = self.dict[self.cuadruplo]
 				self.interpret(op,opdo1,opdo2,res)
 			else: 
 				break
-		##for n, (op, opdo1, opdo2, res) in self.dict.items():
-			#self.cuadruplo = n
-			#self.interpret(n, op, opdo1, opdo2, res)		
 	
+	# funcion que simula el switch grandote que es requerido en la maquina virtual
+	# en este caso dependiendo del OP hace una funcion
+	# el switch es simuladoc on un diccionario (tabla de hashing) de Python	
 	def interpret(self,x,y,z,w):
 		switch = {
 			0 : self.suma,
@@ -149,6 +150,8 @@ class virtualMachine(object):
 		else:
      			pass
         
+	# funcion que busca dos operados dependiendo del rango de memoria en que se encuentra
+	# regresa una tupla con los dos operadores
 	def memSearch(self, a, b):
 		y = 0
 		if a >= 1000 and a < 2000:
@@ -273,6 +276,7 @@ class virtualMachine(object):
 			t1 = 3
 		return (x,y)
 
+	#funcion que guarda un valor en la lista de memoria dependiendo del rango de la memoria
 	def memAdd(self,a,s):
 		if a >= 1000 and a < 2000:
 			self.memGlobal.memInt(a-self.memGlobal.mint,s)
@@ -314,7 +318,9 @@ class virtualMachine(object):
 			self.memPoint.memString(a-self.memPoint.mstring,s)
 		if a >= 29000 and a < 30000:
 			self.memPoint.memBoolean(a-self.memPoint.mboolean,s)
-
+	
+	# funcion que se usa para la asignacion en donde obtiene el valor dependiendo del rango
+	# y manda a llamar a memAdd para guardarla
 	def memAss(self, b, s):
 		if b >= 1000 and b < 2000:
 			y = self.memGlobal.getInt(b-self.memGlobal.mint)
@@ -376,9 +382,8 @@ class virtualMachine(object):
 		if b >= 29000 and b < 30000:
 			y = self.memPoint.getBoolean(b-self.memPoint.mboolean)
 			self.memAdd(s,y)
-
 	
-
+	# funcion que usa para imprimir a pantalla
 	def memPrint(self, b):
 		if b >= 1000 and b < 2000:
 			y = self.memGlobal.getInt(b-self.memGlobal.mint)
@@ -440,7 +445,8 @@ class virtualMachine(object):
 		if b >= 29000 and b < 30000:
 			y = self.memPoint.getBoolean(b-self.memPoint.mboolean)
 			print y
-
+	
+	# funcion que se usa para lleer de pantalla
 	def memRead(self,a,s):
 		if a >= 1000 and a < 2000:
 			ss = int(s)
@@ -491,7 +497,7 @@ class virtualMachine(object):
 			ss = bool(s)
 		 	self.memLoc.memBoolean(a-self.memLoc.mboolean,ss)
 
-
+	#funcion que se usa para los gotof y busca el valor dependiendo de la direccion virtual
 	def funcFalso(self,b):
 		if b >= 4000 and b < 5000:
 			y = self.memGlobal.getBoolean(b-self.memGlobal.mboolean)
@@ -503,6 +509,7 @@ class virtualMachine(object):
 			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
 		return y
 
+	# funcion que guarda los paramatros en la lista de parametros
 	def memPar(self, a, s):
 		if a >= 20000 and a < 21000: 
 			self.memParam.memInt(a-self.memParam.mint,s)
@@ -512,7 +519,9 @@ class virtualMachine(object):
 			self.memParam.memString(a-self.memParam.mstring,s)
 		if a >= 23000 and a < 24000:
 			self.memParam.memBoolean(a-self.memParam.mboolean,s)
-
+	
+	# funcion que busca el valor en las listas de memoria y despues manda a llamar a
+	# memPar para que se ocupe de guardar el valor
 	def memAsp(self, b, s):
 		if b >= 1000 and b < 2000:
 			y = self.memGlobal.getInt(b-self.memGlobal.mint)
@@ -575,6 +584,7 @@ class virtualMachine(object):
 			y = self.memPoint.getBoolean(b-self.memPoint.mboolean)
 			self.memPar(s,y)
 
+	# funcion que obtiene verifica las dimensiones del arreglo
 	def memArr(self, b, s):
 		if b >= 1000 and b < 2000:
 			y = self.memGlobal.getInt(b-self.memGlobal.mint)
@@ -608,7 +618,8 @@ class virtualMachine(object):
 			y = self.memLoc.getString(b-self.memLoc.mstring)
 		if b >= 23000 and b < 24000:
 			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
-				
+	
+	# el siguiente bloque de funciones son los casos para todos operadores del switch			
 	def suma(self, opdo1, opdo2, res):
 		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)	
@@ -648,9 +659,7 @@ class virtualMachine(object):
 	def less(self, opdo1, opdo2, res):
 		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)
-		#print a, b
 		s = a < b
-		#print s
 		self.memAdd(res, s)
 
 	def greateq(self, opdo1, opdo2, res):
@@ -661,11 +670,8 @@ class virtualMachine(object):
 
 	def lesseq(self, opdo1, opdo2, res):
 		self.cuadruplo+=1
-		print opdo1, opdo2
 		(a,b) = self.memSearch(opdo1,opdo2)
-		print a,b
 		s = a <= b
-		print s
 		self.memAdd(res, s)
 
 	def equaleq(self, opdo1, opdo2, res):
@@ -689,7 +695,6 @@ class virtualMachine(object):
 	def equ(self, opdo1, opdo2, res):
 		self.cuadruplo+=1	
 		self.memAss(opdo2,res)
-		#print self.memPoint.memTablei[0]
 
 	def ret(self, opdo1, opdo2, res):
 		del self.memLoc.memTablei[:]  
@@ -792,10 +797,8 @@ class virtualMachine(object):
 		print "sec"
 
 	def verf(self, opdo1, opdo2, res):
-		#print opdo1, opdo2
 		self.cuadruplo+=1
 		b = self.memArr(opdo1,res)
-		print b, opdo1, res
 		#if b < opdo2 or b > res:
 		#	print "Index out of range!"
 
