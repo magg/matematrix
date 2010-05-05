@@ -1198,7 +1198,7 @@ eqOp<int &op> = (. op = -1; .) '=' (. op = equ;.) .
 //ASIGNACION
 asignacion = (.int op; wchar_t* name; .)  Ident<name> (.
 	asact = st.buscaVariable(numproc, name);
-	//cout << " tu as dir es " << asact <<endl;
+	cout << " tu as dir es " << asact <<endl;
 	POperandos.push(asact);
 	PTipos.push(st.temptipo);
 
@@ -1280,7 +1280,7 @@ mulOp<int &op> = (. op = -1; .) ( '*' (. op = times; .) | '/' (. op = slash; .) 
 
 factor = (. wchar_t* name; .)  ( Ident<name> (.
 	diract = st.buscaVariable(numproc, name);
-	//cout << " tu dir es " << diract <<endl;
+	cout << " tu factor dir es " << diract <<endl;
 	POperandos.push(diract);
 	PTipos.push(st.temptipo);
 

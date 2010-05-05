@@ -573,12 +573,12 @@ int b = 0;
 if (b == 0){
 	list<tablaParam>::iterator q;
 			for (q=hmap[a].param.begin(); q!=hmap[a].param.end(); q++) {	
-				//cout << "entro 2ndo for" << endl;
-				if ( wcscmp(p->name, name) == 0 ) {
+				//cout << "entro al for param" << endl;
+				//wcout << name << p->name << endl;
+				if ( wcscmp(q->name, name) == 0 ) {
 					//cout << "entro al if dentro del for 2" << endl;
 					temptipo = q->tipo;
 					tempdir = q->dirV;
-					tempdim = p->key;
 					b = 1;					
 				}  
 
