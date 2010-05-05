@@ -31,7 +31,7 @@ Memoria MemGlobal;
 Memoria MemTemp;
 Memoria MemConst;
 Memoria MemLoc;
-
+Memoria MemPoint;
 int // types
 	  floats, integer, boolean, complexi, stringg;
 
@@ -45,9 +45,9 @@ int // object kinds
 int // opcodes
 	  ADD,  SUB,   MUL,   DIV,   EQU,  LSS, GTR, DIFF,
 	  GTREQ, LSSEQ, EQEQ, ANDOP, OROP, RET, PRINT, RETURN,
-	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM, END;
+	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM, END,VERF;
 
-int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,conti,contf,contb,conts,numdim;  //Variables utilizadas para generar cuadruplos.
+int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,conti,contf,contb,conts,numdim,idArr, dimactual, templlave,tempbase;  //Variables utilizadas para generar cuadruplos.
 
 int *m;
 int R;
@@ -160,7 +160,7 @@ if(semantico(uno, dos, op) != 5 ) {
 	POperandos.push(temp);
 	PTipos.push(res);
 	POperadores.pop();
-cout << "pila tipos top " << PTipos.top() << endl;
+//cout << "pila tipos top " << PTipos.top() << endl;
 	} else {
 		cout << "Semantic error: Type mismatch" << endl;
 
@@ -342,6 +342,85 @@ cout << "genero cuadruplos" << endl;
 	PSaltos.push((cont_cuadruple-2));
 }
 
+void buildCuadrupleA(int a, int b, int c)
+{
+int tipo,temp;
+tipo=PTipos.top();
+switch(tipo) {
+			case 0:
+				temp = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+			break;
+			case 1:
+				temp = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+			break;
+			case 2:
+				temp = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+			break;
+			case 3:
+				temp = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+			break;
+			case 4:
+				temp = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+			break;
+			default:
+				cout << "Type mismatch" << endl;
+		}
+cuadruplos x;
+	x.op = a;
+	x.opdo1 = b;
+	x.opdo2 = c;
+	x.res = temp ;
+	hasht[cont_cuadruple] = x;
+
+	POperandos.push(temp);
+cout << "Temporal en la primera dimension pila " << POperandos.top() << endl;
+	cont_cuadruple++;
+}
+
+void buildCuadrupleP(int a, int b, int c)
+{
+int tipo,temp;
+tipo=PTipos.top();
+switch(tipo) {
+			case 0:
+				temp = MemPoint.mint;
+				MemPoint.mint = MemPoint.insertaInt(MemPoint.mint, 26000, tipo);
+			break;
+			case 1:
+				temp = MemPoint.mfloat;
+				MemPoint.mfloat = MemPoint.insertaFloat(MemPoint.mfloat, 27000, tipo);
+			break;
+			case 2:
+				temp = MemPoint.mstring;
+				MemPoint.mstring = MemPoint.insertaString(MemPoint.mstring, 28000, tipo);
+			break;
+			case 3:
+				temp = MemPoint.mboolean;
+				MemPoint.mboolean = MemPoint.insertaBoolean(MemPoint.mboolean, 29000, tipo);
+			break;
+			case 4:
+				temp = MemPoint.mcomplex;
+				MemPoint.mcomplex = MemPoint.insertaComplex(MemPoint.mcomplex, 30000, tipo);
+			break;
+			default:
+				cout << "Type mismatch" << endl;
+		}
+cuadruplos x;
+	x.op = a;
+	x.opdo1 = b;
+	x.opdo2 = c;
+	x.res = temp ;
+	hasht[cont_cuadruple] = x;
+	POperandos.push(temp);
+	cont_cuadruple++;
+}
+
+
 void printCuadruplos() {
 
 ofstream f1;
@@ -371,14 +450,14 @@ c2.open("float.cte");
 	}
 c2.close();
 c3.open("str.cte");
-	for (int n=0; n<contf; n++){
+	for (int n=0; n<conts; n++){
 		//cout << stringTable[n].dirV << " " << stringTable[n].val;
 		c3 << ct.sn[n].dirV << " " << ct.sn[n].val << endl;
 	}
 c3.close();
 c4.open("bool.cte");
-	for (int n=0; n<contf; n++){
-		//cout << boolTable[n].dirV << " " << boolTable[n].val;
+	for (int n=0; n<contb; n++){
+		cout << ct.bn[n].dirV << " " << ct.bn[n].val << endl;
 		c4 << ct.bn[n].dirV << " " << ct.bn[n].val << endl;	
 	}
 c4.close();
@@ -395,13 +474,14 @@ void InitDeclarations() { // it must exist
 	var = 0; def = 1; // object kinds
 
 	cont_cuadruple=1;	
-	numdim=0;R=1;	
+	numdim=0;R=1;st.tempnumarr=1;	
 	conti=0;contf=0;contb=0;conts=0;
+	dimactual=0;
 
 	// opcodes
 	ADD  =  0; SUB   =  1; MUL   =  2; DIV   =  3; DIFF   =  4; GTR = 5; LSS = 6;
 	GTREQ = 7; LSSEQ =8; EQEQ =9; ANDOP =10; OROP = 11; EQU = 12; RET = 13; GOTOV = 14;
-	GOTOF = 15; GOTO = 16; PARAM= 17; PRINT = 18; RETURN =19; ERA = 20; GOSUB = 21; READ = 22; END = 23;
+	GOTOF = 15; GOTO = 16; PARAM= 17; PRINT = 18; RETURN =19; ERA = 20; GOSUB = 21; READ = 22; END = 23; VERF=40;
 	
 	numproc=0;
 	MemGlobal.mint = 1000;
@@ -428,6 +508,11 @@ void InitDeclarations() { // it must exist
 	MemLoc.mboolean = 23000;
 	MemLoc.mcomplex = 25000;
 
+	MemPoint.mint = 26000;
+	MemPoint.mfloat=27000;
+	MemPoint.mstring=28000;
+	MemPoint.mboolean=29000;
+	MemPoint.mcomplex=30000;
 }
 
 CHARACTERS
@@ -471,6 +556,7 @@ matematrix = (. wchar_t* name; InitDeclarations(); .) "program" Ident<name>  (.
 
 .) bloque (.
 	buildCuadrupleM(END,-1,-1,-1);
+	st.printArr();
 	st.printLista();
 	printCuadruplos();
 .).
@@ -498,7 +584,8 @@ var_cte (.int n1;float m1;bool b1;wchar_t *s1;.) = ( number (.
 .)  | flotante (. 
 	swscanf(t->val, L"%f", &m1); 
 	ct.tempconst = MemConst.mfloat;
-	MemConst.mfloat = ct.insertaBoolean(MemConst.mfloat,12000, m1);
+	cout << m1 << endl;
+	MemConst.mfloat = ct.insertaFloat(MemConst.mfloat,12000, m1);
 	ct.constTipo = 1;
 	contf++;
 .) | "true" (. 
@@ -516,13 +603,96 @@ var_cte (.int n1;float m1;bool b1;wchar_t *s1;.) = ( number (.
 .) | string (. 
 	s1 = coco_string_create(t->val); 
 	ct.tempconst = MemConst.mstring;
-	MemConst.mstring = ct.insertaBoolean(MemConst.mstring,13000, s1);
+	MemConst.mstring = ct.insertaString(MemConst.mstring,13000, s1);
 	ct.constTipo = 2;
 	conts++;
 .)  | imaginario ).
 
 bloque = '{' [ estatuto { estatuto } ] '}'.
-index = '[' exp ']' {  '[' exp ']'  }.
+index = '[' 
+(.
+
+cout << "Temp Vardim " << st.tempdim << endl;
+	if (st.tempdim != -1) {
+		idArr = POperandos.top(); POperandos.pop();
+		PDimensiones.push(idArr);	
+		POperadores.push(-999);
+		templlave=st.tempdim;
+		tempbase=st.tempdir;
+		st.tempdimfinal = st.getDim(templlave);
+		cout << "dimensiones" << st.tempdimfinal<< endl;
+	}
+
+.) exp (. 
+int res, sup;
+dimactual++;
+res=POperandos.top();
+//cout << "Llave " << templlave<< endl;
+//cout<< "dim actual " << dimactual << endl;
+sup=st.dameSup(templlave, dimactual);
+buildCuadrupleM(VERF, res, 0, sup);
+.)']'
+(.
+int aux, aux1, aux2,M, base;
+if (dimactual < st.tempdimfinal){ 
+cout << "True if arreglo dim 1" << endl;
+	aux=POperandos.top();	
+M=st.dameM(templlave,dimactual);
+	buildCuadrupleA(MUL, aux, M);
+
+/*
+else if (dimactual > 1) {
+	aux2=POperandos.top();POperandos.pop();
+	aux1=POperandos.top();POperandos.pop();
+	buildCuadrupleA(ADD, aux1, aux2);
+}
+*/
+} else {
+aux1=POperandos.top(); POperandos.pop();
+buildCuadrupleA(ADD, aux1, 0);
+base=tempbase;
+buildCuadrupleP(ADD,POperandos.top(),base);
+POperadores.pop();
+PDimensiones.pop();
+}
+.) {  '[' 
+(.
+
+//idArr = POperandos.top(); POperandos.pop();
+PDimensiones.push(idArr);	
+POperadores.push(-999);
+.)
+ exp (. 
+int res, sup;
+dimactual++;
+res=POperandos.top();
+cout << "Llave " << templlave<< endl;
+cout<< "dim actual " << dimactual << endl;
+sup=st.dameSup(templlave, dimactual);
+buildCuadrupleM(VERF, res, 0, sup);
+.) ']' 
+(.
+int aux, aux1, aux2,M, base;
+cout<< "dim actual!!! " << dimactual << endl;
+if (dimactual < st.tempdimfinal){ 
+cout << "+1 dimension if checanulo " << endl;
+aux=POperandos.top();
+	M=st.dameM(templlave,dimactual);
+	buildCuadrupleA(MUL, aux, M);
+}
+else if (dimactual > 1) {
+	cout << "entro a dimactual mayor a 1" << endl;
+	aux2=POperandos.top();POperandos.pop();
+	aux1=POperandos.top();POperandos.pop();
+	buildCuadrupleA(ADD, aux1, aux2);
+		aux1=POperandos.top(); POperandos.pop();
+		buildCuadrupleA(ADD, aux1, 0);
+		base=tempbase;
+		buildCuadrupleP(ADD,POperandos.top(),base);
+		POperadores.pop();
+		PDimensiones.pop();
+}
+.)  }.
 estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | asignacion ).
 //llamadas = '(' (  funciones  | otras ) ')' .
 //otras = Ident<name> [index] ( asignacion | aesp ).
@@ -542,9 +712,11 @@ funcN = (. wchar_t* name; .)  Ident<name> (.
  		POperandos.pop();
  		tipoarg = PTipos.top();
  		PTipos.pop();
+		int tempk;
  		st.temptipop = st.verificaParametro(st.tempnumproc,k);
  		if( st.temptipop == tipoarg && st.temptipop != -1 ) {
- 			buildCuadrupleM(PARAM,arg,-1,k);
+			tempk =  st.returnParamK(st.tempnumproc, k);
+ 			buildCuadrupleM(PARAM,arg,-1,tempk);
  		}
  .) { ',' (.k=k+1;.) expresion (.
  		arg = POperandos.top();
@@ -553,19 +725,18 @@ funcN = (. wchar_t* name; .)  Ident<name> (.
  		PTipos.pop();
  		st.temptipop = st.verificaParametro(st.tempnumproc, k);
  		if( st.temptipop == tipoarg && st.temptipop != -1 ) {
- 			buildCuadrupleM(PARAM,arg,-1,k);
+			tempk =  st.returnParamK(st.tempnumproc, k);
+ 			buildCuadrupleM(PARAM,arg,-1,tempk);
  		}
  .) } ')' (.
- 			buildCuadrupleM(GOSUB,arg,-1,-1);
+			int tempnp;
+			tempnp = st.buscaDirInicio(st.tempnumproc);
+ 			buildCuadrupleM(GOSUB,tempnp,-1,-1);
 .).
 
 funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
 llamadaFuncE = (fTrigonom | log).
-variables = "var" ( vares | varns ) { ( vares | varns ) } "end" (.
-	if (numproc != 0) {
-		st.insertaContDirProc(numproc, cont_cuadruple);
-	}
-.).
+variables = "var" ( vares | varns ) { ( vares | varns ) } "end".
 vares = ( vector | matriz ).
 matriz = (. wchar_t* name;int type; .)  "matrix" tipo<type> Ident<name> '['expresion ',' expresion ']' (.
 /*
@@ -678,8 +849,8 @@ varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (.
 }
 //PDimensiones.push(-1);
 .) ['['(.
+numdim=0;
 	R = 1;
-	st.tempnumarr=1;
 	st.agregaDim(numproc,st.tempnumarr, name); 
 	numdim++; 
 .) number(.
@@ -688,8 +859,8 @@ varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (.
 	if (n1 < 1) {
 		(L"La constante debe ser mayor que 0.");
 	} else { 
-		st.newTablaDesc(numproc,-1,-1,-1,st.tempnumarr);
-		st.almacenaConsArr(st.tempnumarr,numdim,n1-1);
+		st.newTablaDesc(numproc,0,n1-1,-1,st.tempnumarr);
+		//st.almacenaConsArr(st.tempnumarr,numdim,n1-1);
 		R = n1* R;	
 		PDimensiones.push(n1);
 	}
@@ -702,8 +873,8 @@ varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (.
 	if (n1 < 1) {
 		(L"La constante debe ser mayor que 0.");
 	} else { 
-		st.newTablaDesc(numproc,-1,-1,-1,st.tempnumarr);
-		st.almacenaConsArr(st.tempnumarr,numdim,n1-1);	
+		st.newTablaDesc(numproc,0,n1-1,-1,st.tempnumarr);
+		//st.almacenaConsArr(st.tempnumarr,numdim,n1-1);	
 		R = n1*R;	
 		PDimensiones.push(n1);
 		PDimensiones.push(n1);
@@ -715,7 +886,6 @@ varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (.
 	int K;
 	K = st.loopDim(R,numdim,m,st.tempnumarr);
 	free(m); 
-	st.printArr(); st.tempnumarr++;
 	switch(numproc){
 	case 0:
 		switch(type) {
@@ -759,14 +929,7 @@ varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (.
 				MemLoc.mint = MemLoc.mint + K;
 		}
 	}
-
-
-
-
-
-
-
-
+st.tempnumarr+=1;
  .) ] 
 /*
 PDimensiones.top();
@@ -782,7 +945,7 @@ eqOp<int &op> = (. op = -1; .) '=' (. op = equ;.) .
 //ASIGNACION
 asignacion = (.int op; wchar_t* name; .)  Ident<name> (.
 	asact = st.buscaVariable(numproc, name);
-	cout << " tu as dir es " << asact <<endl;
+	//cout << " tu as dir es " << asact <<endl;
 	POperandos.push(asact);
 	PTipos.push(st.temptipo);
 
@@ -815,7 +978,7 @@ exp = (.int op; .)  exp1 [ relOp<op> (.
 .) exp1 (.
 	if ( !POperadores.empty() ) {
 		if ( POperadores.top() == gtr || POperadores.top() == lss || POperadores.top() == diff || POperadores.top() == eqeq || POperadores.top() == lsseq || POperadores.top() == gtreq ) {
-cout << "Entro a hacer cuadruplo... comparacion" << endl;
+//cout << "Entro a hacer cuadruplo... comparacion" << endl;
 			buildCruadruple(POperadores.top());
 		}
 	} 
@@ -864,7 +1027,7 @@ mulOp<int &op> = (. op = -1; .) ( '*' (. op = times; .) | '/' (. op = slash; .) 
 
 factor = (. wchar_t* name; .)  ( Ident<name> (.
 	diract = st.buscaVariable(numproc, name);
-	cout << " tu dir es " << diract <<endl;
+	//cout << " tu dir es " << diract <<endl;
 	POperandos.push(diract);
 	PTipos.push(st.temptipo);
 
@@ -885,7 +1048,11 @@ factor = (. wchar_t* name; .)  ( Ident<name> (.
 
 
 
-funcion = "def" (funcV | funcT) '('[parametros]')' bloque (.
+funcion = "def" (funcV | funcT) '('[parametros]')' (.
+	if (numproc != 0) {
+		st.insertaContDirProc(numproc, cont_cuadruple);
+	}
+.) bloque (.
 	buildCuadrupleM(RET,-1,-1,-1);	
 	numproc = numproc+1;
 .).
@@ -1045,7 +1212,7 @@ condicion = "if" '(' expresion ')'
 	int aux;
 	aux=PTipos.top();
 	if (aux == 3){
-cout << "entra a hacer cuadruplo condicion" << endl;
+//cout << "entra a hacer cuadruplo condicion" << endl;
 		buildCuadruple4(POperandos.top());
 		PSaltos.push((cont_cuadruple-1));
 	} else {
@@ -1071,8 +1238,8 @@ PSaltos.pop();
 rellenar(salto, cont_cuadruple);
 PSaltos.push((cont_cuadruple-1));
 
-cout << "En psaltos despues de cuadruplo5 " << PSaltos.top() << endl;
-cout << cont_cuadruple << endl;
+//cout << "En psaltos despues de cuadruplo5 " << PSaltos.top() << endl;
+//cout << cont_cuadruple << endl;
 
  .)
 bloque ]
@@ -1084,7 +1251,7 @@ rellenar(sss, cont_cuadruple);
 .).
 //Acciones para generar cuadruplos de WHILE
 ciclowhile = "while" (. 
-	cout << "entro al while" << endl;
+	//cout << "entro al while" << endl;
 	PSaltos.push(cont_cuadruple); 
 .) '(' expresion ')' (.
 	buildCuadruple3();
@@ -1095,7 +1262,7 @@ ciclowhile = "while" (.
 ciclofor = (. wchar_t* name; .)  "for" '(' asignacion expresion ';'(.
 	buildCuadrupleFOR();
 .) ')' bloque (.
-cout << "salio bloque" << endl;
+//cout << "salio bloque" << endl;
 	buildCuadrupleM(0,asact,1,asact);
 	int retorno = PSaltos.top();
 	PSaltos.pop();
@@ -1105,7 +1272,7 @@ cout << "salio bloque" << endl;
 .) .
 //Acciones para generar cuadruplos de de escritura (WRITE)
 escritura = "print" '(' exp (.
-	cout << "entro al print" << endl;
+	//cout << "entro al print" << endl;
 	int resul = POperandos.top();
 	POperandos.pop();
 cout << "pop : " << resul << endl;
