@@ -1,18 +1,13 @@
 program test;
 var 
-int a[5];
-int g;
+int a;
+int b;
 end
-
-def int funcion(int c){
-var
-int f;
-end
-
-}
 
 main {
-
-g = <funcion(5)>;
+b=10;
+for(a=5;a<b) {
+print(a);	
+}
 
 }
