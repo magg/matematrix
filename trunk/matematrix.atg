@@ -45,7 +45,8 @@ int // object kinds
 int // opcodes
 	  ADD,  SUB,   MUL,   DIV,   EQU,  LSS, GTR, DIFF,
 	  GTREQ, LSSEQ, EQEQ, ANDOP, OROP, RET, PRINT, RETURN,
-	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM, END,VERF;
+	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM, END, 
+	  PM, SQRT, POW, DIST, ECU, SIN, CSC, COS, COT, TAN, SEC,VERF;
 
 int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,conti,contf,contb,conts,numdim,idArr, dimactual, templlave,tempbase;  //Variables utilizadas para generar cuadruplos.
 
@@ -269,6 +270,7 @@ void buildCuadrupleM(int a, int b, int c, int d){
 	cont_cuadruple++;
 
 }
+//genera cuadruplos del for
 void buildCuadrupleFOR(){
 	int temp, temp2;
 	int tipo = PTipos.top();
@@ -340,6 +342,256 @@ cout << "saco de operandos exp2: " << exp2 << endl;
 cout << "genero cuadruplos" << endl;
 	//Libera temp
 	PSaltos.push((cont_cuadruple-2));
+}
+
+//Genera cuadruplos para el punto medio.
+void buildCuadruplePM(){
+	int t1,t2,t3,t4;
+	int tipo = PTipos.top();
+	PTipos.pop();
+
+		switch(tipo) {
+			case 0:
+				t1 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+				t2 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+				t3 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+				t4 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+
+			break;
+			case 1:
+				t1 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				t2 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				t3 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				t4 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+			break;
+			case 2:
+				t1 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+				t2 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+				t3 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+				t4 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);				
+			break;
+			case 3:
+				t1 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				t2 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				t3 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				t4 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+			break;
+			case 4:
+				t1 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				t2 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				t3 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				t4 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+			break;
+			default:
+				cout << "Type mismatch PUNTO MEDIO.." << endl;
+		}
+
+	cout << "Genero temporales" << endl;
+	int y2 = POperandos.top();
+	POperandos.pop();
+	int x2 = POperandos.top();
+	POperandos.pop();
+	int y1 = POperandos.top();
+	POperandos.pop();
+	int x1 = POperandos.top();
+	POperandos.pop();
+
+	buildCuadrupleM(0,x1,x2,t1);
+	buildCuadrupleM(3,t1,2,t2);
+	buildCuadrupleM(0,y1,y2,t3);
+	buildCuadrupleM(3,t3,2,t4);
+	buildCuadrupleM(24,t2,t4,-1);	
+}
+//Genera cuadruplos para el punto medio.
+void buildCuadrupleDosP(){
+	int t1,t2,t3,t4,t5,t6;
+	int tipo = PTipos.top();
+	PTipos.pop();
+
+		switch(tipo) {
+			case 0:
+				t1 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+				t2 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+				t3 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+				t4 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+				t5 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+				t6 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+
+			break;
+			case 1:
+				t1 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				t2 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				t3 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				t4 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				t5 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				t6 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+			break;
+			case 2:
+				t1 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+				t2 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+				t3 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+				t4 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+				t5 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+				t6 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);					
+			break;
+			case 3:
+				t1 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				t2 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				t3 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				t4 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				t5 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				t6 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+			break;
+			case 4:
+				t1 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				t2 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				t3 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				t4 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				t5 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				t6 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+			break;
+			default:
+				cout << "Type mismatch PUNTO MEDIO.." << endl;
+		}
+
+	cout << "Genero temporales" << endl;
+	int y2 = POperandos.top();
+	POperandos.pop();
+	int x2 = POperandos.top();
+	POperandos.pop();
+	int y1 = POperandos.top();
+	POperandos.pop();
+	int x1 = POperandos.top();
+	POperandos.pop();
+
+	buildCuadrupleM(1,x2,x1,t1);
+	buildCuadrupleM(POW,t1,2,t2);
+	buildCuadrupleM(1,y2,y1,t3);
+	buildCuadrupleM(POW,t3,2,t4);
+	buildCuadrupleM(0,t2,t4,t5);
+	buildCuadrupleM(SQRT,t5,-1,t6);
+	buildCuadrupleM(DIST,t6,-1,-1);	
+}
+//Genera cuadruplos para generar la ecuacion de una recta.
+void buildCuadrupleEcu(){
+	int t1,t2,t3;
+	int tipo = PTipos.top();
+	PTipos.pop();
+
+		switch(tipo) {
+			case 0:
+				t1 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+				t2 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+				t3 = MemTemp.mint;
+				MemTemp.mint = MemTemp.insertaInt(MemTemp.mint, 6000, tipo);
+
+			break;
+			case 1:
+				t1 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				t2 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				t3 = MemTemp.mfloat;
+				MemTemp.mfloat = MemTemp.insertaFloat(MemTemp.mfloat, 7000, tipo);
+				
+			break;
+			case 2:
+				t1 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+				t2 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+				t3 = MemTemp.mstring;
+				MemTemp.mstring = MemTemp.insertaString(MemTemp.mstring, 8000, tipo);
+					
+			break;
+			case 3:
+				t1 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				t2 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				t3 = MemTemp.mboolean;
+				MemTemp.mboolean = MemTemp.insertaBoolean(MemTemp.mboolean, 9000, tipo);
+				
+			break;
+			case 4:
+				t1 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				t2 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				t3 = MemTemp.mcomplex;
+				MemTemp.mcomplex = MemTemp.insertaComplex(MemTemp.mcomplex, 10000, tipo);
+				
+			break;
+			default:
+				cout << "Type mismatch Ecuacion.." << endl;
+		}
+
+	cout << "Genero temporales" << endl;
+	int y2 = POperandos.top();
+	POperandos.pop();
+	int x2 = POperandos.top();
+	POperandos.pop();
+	int y1 = POperandos.top();
+	POperandos.pop();
+	int x1 = POperandos.top();
+	POperandos.pop();
+
+	buildCuadrupleM(1,y2,y1,t1);
+	buildCuadrupleM(1,x2,x1,t2);
+	buildCuadrupleM(3,t1,t2,t3);
+	buildCuadrupleM(ECU,t1,t2,t3);
 }
 
 void buildCuadrupleA(int a, int b, int c)
@@ -481,7 +733,8 @@ void InitDeclarations() { // it must exist
 	// opcodes
 	ADD  =  0; SUB   =  1; MUL   =  2; DIV   =  3; DIFF   =  4; GTR = 5; LSS = 6;
 	GTREQ = 7; LSSEQ =8; EQEQ =9; ANDOP =10; OROP = 11; EQU = 12; RET = 13; GOTOV = 14;
-	GOTOF = 15; GOTO = 16; PARAM= 17; PRINT = 18; RETURN =19; ERA = 20; GOSUB = 21; READ = 22; END = 23; VERF=40;
+	GOTOF = 15; GOTO = 16; PARAM= 17; PRINT = 18; RETURN =19; ERA = 20; GOSUB = 21; READ = 22; END = 23; 
+	PM = 24; SQRT = 25; POW = 26; DIST = 27; ECU = 28; SIN = 29; CSC = 30; COS = 31; COT = 32; TAN = 33; SEC = 34; VERF=40;
 	
 	numproc=0;
 	MemGlobal.mint = 1000;
@@ -1310,11 +1563,34 @@ Sum_M = (. wchar_t* name; .)  "sum_m" '(' Ident<name> '+' Ident<name> ')' ';'.
 Inv_M = "inv_m" '(' expresion ')' ';'.
 Mul_M = "mul_m" '(' expresion ',' expresion ')' ';'.
 Trans_M = "trans_m" '(' expresion ')' ';'.
-punto_medio = "p_m" '(' expresion ',' expresion ',' expresion ',' expresion ')'.
-dist_2puntos = "dist_2" '(' expresion ',' expresion ',' expresion ',' expresion ')'.
-rec_entre_2puntos = "rec_pp" '(' expresion ',' expresion ',' expresion ',' expresion ')'.
+//PUNTO MEDIO
+punto_medio = "p_m" '(' expresion ',' expresion ',' expresion ',' expresion (. 
+	cout << "entro a la expresion final" << endl;
+	buildCuadruplePM();
+.) ')'.
+//Distancia entre 2 puntos
+dist_2puntos = "dist_2" '(' expresion ',' expresion ',' expresion ',' expresion (.
+	buildCuadrupleDosP();
+.) ')'.
+//Ecuacion de linea recta
+rec_entre_2puntos = "rec_pp" '(' expresion ',' expresion ',' expresion ',' expresion (. 
+	buildCuadrupleEcu();
+.)')'.
+
+trigoOp<int &op> = (. op = -1; .)
+( "sin" (. op = SIN; .) | 
+"csc" (. op = CSC; .) | 
+"cos" (. op = COS; .) | 
+"cot" (. op = COT; .) | 
+"tan" (. op = TAN; .) | 
+"sec"  (. op = SEC; .) ). 	
+
 fGraph = "graph" '(' exp1 ')'.
-fTrigonom = ("sin" | "csc" | "cos" | "cot" | "tan" | "sec") '(' expresion ')'.
+fTrigonom = (.int op;.) trigoOp<op> '(' expresion (.
+	int resultado = POperandos.top();
+	POperandos.pop();
+	buildCuadrupleM(op,resultado,-1,-1);
+.) ')'.
 log = ( 'E' | "log" | "ln" ) '(' expresion ')'.
 fAlgebra = ( punto_medio | dist_2puntos | rec_entre_2puntos ).
 fMatrix = ( Sum_M | Inv_M | Mul_M | Trans_M).
