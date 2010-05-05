@@ -1,3 +1,6 @@
+#clase para el manejo de memoria en la maquina virtual
+#se crean listas por tipo y se rellenan valores default
+
 class memoriaVirtual(object):
 
 	def __init__(self):

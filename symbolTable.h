@@ -3,6 +3,7 @@
 
 // NOTA: solo se puede compilar en linux
 // compilado en Ubuntu 9.10 usando g++ (Ubuntu 4.4.1-4ubuntu9) 4.4.1
+// compilado en Ubuntu 10.04 usando g++ (gcc version 4.4.3 (Ubuntu 4.4.3-4ubuntu5)) 
 
 #include <list>
 #include <tr1/unordered_map>
@@ -10,12 +11,14 @@
 using namespace std;
 using namespace std::tr1;
 
+//clase memoria 
 class Memoria {
 
 public:
 
 int mint, mfloat, mstring, mboolean, mcomplex;
 
+//arreglo de structs para simular las tablas memoria por tipo
 typedef struct {
 	int tipo;
 	int dirV;
@@ -24,19 +27,12 @@ typedef struct {
 
 tablaMem i,f,s,c,b;
 
-//int integers[1000];
-//float floats[1000];
-//wchar_t strings[1000];
-//int complexs[1000];
-//bool booleans[1000];
-
 int insertaInt(int dirv,int dirb, int tipo){
 	i[dirv-dirb].tipo = tipo;
 	i[dirv-dirb].dirV = dirv;
 
 return dirv+1;
 }
-
 
 int insertaFloat(int dirv,int dirb, int tipo){
 	f[dirv-dirb].tipo = tipo;
@@ -70,6 +66,7 @@ return dirv+1;
 
 };
 
+//clase tamano que se usa en el dirProc
 class Tamano {
 public:
 	int vContI;
@@ -90,11 +87,13 @@ public:
 };
 
 
+//clase que se usa para simular las tablas de constantes por tipo
 class constTable{
 public:
 
 int tempconst, constTipo;
 
+//arreglos de structs que representan las tablas
 typedef struct {
 	int val;
 	int dirV;
@@ -142,18 +141,20 @@ intTable in; floatTable fn; boolTable bn; stringTable sn;
 	}
 };
 
-
+//clase symbolTable en donde se crea y llena el dirProc
 class symbolTable {
 public:
 
 int temptipo, tempdir, temptipop, tempnumproc, tempnumarr, tempdim, tempdimfinal;
 
+//struct para la tabla de arreglo
 typedef struct {
 	int lsup;
 	int linf;
 	int m;
 } tablaArr;
 
+//struct que simula la tabla de variables
 typedef struct {
 	wchar_t* name;
 	int tipo;
@@ -161,12 +162,14 @@ typedef struct {
 	int key;
 } tablaVars;
 
+//struct que simula la tabla de parametros
 typedef struct {
 	wchar_t* name;
 	int tipo;
 	int dirV;
 } tablaParam;
 
+//struct que representa la estructura basica del dirProc
 typedef struct {
 	wchar_t* name;
 	int tipo;
@@ -177,16 +180,20 @@ typedef struct {
 	list<tablaParam> param;
 } dirProc;
 
+//struct que se usa para hacer el calculo de los arreglos
 typedef struct {
 	list<tablaArr> dim;
 } dArr;
 
+// tabla de hashing del directorio de procedimiento
 unordered_map<int, dirProc> hmap;
+//tabla de hasing que usa el calculo de arreglos
 unordered_map<int, dArr> hdim;
 
+//funcion que inserta por primera vez un renglon al dirProc
 void insertaDirProc(int a, int type, wchar_t* name, int m){
 	dirProc x;
-	x.name = name; x.tipo = type; x.dirV = m; 	
+	x.name = name; x.tipo = type; x.dirV = m; x.dirI=0;	
 	x.tam.vContI=0; x.tam.pContI=0; x.tam.tContI=0;
 	x.tam.vContF=0; x.tam.pContF=0; x.tam.tContF=0;
 	x.tam.vContS=0; x.tam.pContS=0; x.tam.tContS=0;
@@ -197,6 +204,7 @@ void insertaDirProc(int a, int type, wchar_t* name, int m){
 
 }
 
+//funcion que inserta nuevos renglones a la tabla de variables
 int newTablaVar(int a, int tipo, wchar_t* nombre, int m){
 		
 tablaVars x;
@@ -236,7 +244,7 @@ switch(tipo) {
 return m+1;
 }
 
-
+//funcion que apunta al parametro K y regresa dirV
 int returnParamK(int a, int k){
 			list<tablaParam>::iterator q;
 			int i = 1;
@@ -253,11 +261,13 @@ int returnParamK(int a, int k){
 return dir;
 }
 
+//funcion que regresa la dirI
 int buscaDirInicio(int a){
 
 return hmap[a].dirI;
 }
 
+//funcion que agrega a tablaVar un id para saber que la variable es dimensionada
 void agregaDim(int a,int llave, wchar_t* name){
 	
 	list<tablaVars>::iterator p;
@@ -270,6 +280,7 @@ void agregaDim(int a,int llave, wchar_t* name){
 
 }
 
+//agrega un nuevo renglon a la tabla para los calculos de arreglos
 void newTablaDesc(int a, int inf, int sup, int k, int llave){
 
 	tablaArr x;
@@ -280,6 +291,7 @@ void newTablaDesc(int a, int inf, int sup, int k, int llave){
 
 }
 
+//funcion que imprime las listas de structs que se generan al calcular arreglos
 void printArr(){
 
 list<tablaArr>::iterator p;
@@ -292,6 +304,7 @@ for(unordered_map<int, dArr>::iterator tt = hdim.begin(); tt != hdim.end(); tt++
 
 }
 
+//funcion que checa si es nulo
 bool checaNulo(int a, int m){
 cout << "valor de m en checa nulo" << m <<  endl;
 int i = 1;
@@ -309,7 +322,7 @@ list<tablaArr>::iterator p;
 return b;
 }
 
-
+// funcion que regresa el num de dimensiones de una variable dimensionada
 int getDim(int a){
 int i = 0;
 list<tablaArr>::iterator p;
@@ -319,6 +332,7 @@ list<tablaArr>::iterator p;
 return i;
 }
 
+// funcion que almacena los valores en el struct para hacer el calculo de arreglos
 void almacenaConsArr(int a, int m, int n){
 
 list<tablaArr>::iterator p;
@@ -334,6 +348,7 @@ for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
 
 }
 
+// funcion que regresa el limite sup de una dimension
 int dameSup(int a, int m){
 
 int k=0; 
@@ -351,6 +366,7 @@ return k;
 
 }
 
+// funcion que regresa la m del calculo de arreglos
 int dameM(int a, int m){
 int k=0;
 list<tablaArr>::iterator p;
@@ -366,6 +382,7 @@ return k;
 
 }
 
+// funcion que almacena el valor de K/m
 void almacenaK(int a, int m, int k){
 
 list<tablaArr>::iterator p;
@@ -380,7 +397,7 @@ for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
 	}
 }
 
-
+//funcion que hace el calculo en si de los arreglos
 int loopDim(int R, int numdim, int *m, int a) {
 
 int dim = 1;
@@ -404,6 +421,7 @@ int ls;
 return aux-1;
 }
 
+// funcion que checa si la variable ya existe en la tabla de variables
 bool checaTablaVars(int a, int tipo, wchar_t* nombre){
 
 bool b = false;
@@ -421,8 +439,7 @@ bool b = false;
 return b;
 }
 
-
-
+//funcion que agrega un nuevo renglo a la tabla de parametros
 int newTablaParam(int a, int tipo, wchar_t* nombre, int m){
 		tablaParam x;
 switch(tipo) {
@@ -459,6 +476,7 @@ switch(tipo) {
 return m+1;
 }
 
+// funcion que checa si existe el parametro en la tabla de parametros
 bool checaTablaParam(int a, int tipo, wchar_t* nombre){
 
 bool b = false;
@@ -476,10 +494,12 @@ bool b = false;
 return b;
 }
 
+//funcion que inserta al dirProc la dir de Inicio
 void insertaContDirProc(int a,int c){
 	hmap[a].dirI = c;
 }
 
+//funcion que agrega un nuevo renglo de dirProc
 int newDirProc(int a, int type, wchar_t* nombre, int m){
 
 	dirProc x;
@@ -493,7 +513,7 @@ int newDirProc(int a, int type, wchar_t* nombre, int m){
 return m+1;
 }
 
-
+//funcion que checa si existe el nombre de una funcion en el dirproc
 bool checaDirProc(int a, int tipo, wchar_t* nombre){
 
 bool b = false;
@@ -507,8 +527,7 @@ bool b = false;
 return b;
 }
 
-
-
+//funcion que checa si existe el nombre de una funcion en el dirproc
 bool checaDirProc2(wchar_t* nombre){
 
 bool b = false;
@@ -522,6 +541,7 @@ bool b = false;
 return b;
 }
 
+//funcion que checa si existe el nombre de una funcion en el dirproc y regresa su numproc
 int checaDirProc3(wchar_t* nombre){
 
 	for(unordered_map<int, dirProc>::iterator it = hmap.begin(); it != hmap.end(); it ++){
@@ -533,7 +553,7 @@ int checaDirProc3(wchar_t* nombre){
 return tempnumproc ;
 }
 
-
+//funcion que verifica parametro para la generacion del cuadruplo param
 int verificaParametro(int a, int k){
 bool b = false;
 int t;
@@ -558,6 +578,8 @@ int cont=1;
 
 }
 
+//funcion que busca una variable en la tabla de variables y parametros
+// en todos los ambitos, local y global
 int buscaVariable(int a, wchar_t* name){
 int b = 0;	
 	list<tablaVars>::iterator p;
@@ -601,6 +623,7 @@ if (b == 0){
 	return tempdir;
 }
 
+//funcion que imprime el directorio de procedimientos
 void printLista(){
 	list<tablaVars>::iterator p;
 	list<tablaParam>::iterator q;

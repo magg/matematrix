@@ -1,13 +1,16 @@
 program test;
 var 
-int a;
+int a[8];
 int b;
+int i;
+float c;
 end
 
 main {
 b=10;
-for(a=5;a<b) {
-print(a);	
+for(i=0;i<b) {
+print(i);
+
 }
 
 }
