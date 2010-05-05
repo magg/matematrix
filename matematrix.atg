@@ -45,10 +45,10 @@ int // object kinds
 int // opcodes
 	  ADD,  SUB,   MUL,   DIV,   EQU,  LSS, GTR, DIFF,
 	  GTREQ, LSSEQ, EQEQ, ANDOP, OROP, RET, PRINT, RETURN,
-	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM, END, 
+	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM, END,
 	  PM, SQRT, POW, DIST, ECU, SIN, CSC, COS, COT, TAN, SEC,VERF;
 
-int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,conti,contf,contb,conts,numdim,idArr, dimactual, templlave,tempbase;  //Variables utilizadas para generar cuadruplos.
+int numproc, tipoactual,tipo_proc, cont_cuadruple, diract,asact, aux,k,arg,tipoarg,conti,contf,contb,conts,numdim,idArr, dimactual, templlave,tempbase, tempfor;  //Variables utilizadas para generar cuadruplos.
 
 int *m;
 int R;
@@ -317,8 +317,8 @@ cout << "saco de operandos exp2: " << exp2 << endl;
 	cuadruplos x,y,z;
 
 	x.op = 12;
-	x.opdo1 = exp2;
-	x.opdo2 = -1;
+	x.opdo1 = -1;
+	x.opdo2 = exp2;
 	x.res = temp;
 
 	y.op = 8;
@@ -733,8 +733,7 @@ void InitDeclarations() { // it must exist
 	// opcodes
 	ADD  =  0; SUB   =  1; MUL   =  2; DIV   =  3; DIFF   =  4; GTR = 5; LSS = 6;
 	GTREQ = 7; LSSEQ =8; EQEQ =9; ANDOP =10; OROP = 11; EQU = 12; RET = 13; GOTOV = 14;
-	GOTOF = 15; GOTO = 16; PARAM= 17; PRINT = 18; RETURN =19; ERA = 20; GOSUB = 21; READ = 22; END = 23; 
-	PM = 24; SQRT = 25; POW = 26; DIST = 27; ECU = 28; SIN = 29; CSC = 30; COS = 31; COT = 32; TAN = 33; SEC = 34; VERF=40;
+	GOTOF = 15; GOTO = 16; PARAM= 17; PRINT = 18; RETURN =19; ERA = 20; GOSUB = 21; READ = 22; END = 23; PM = 24; SQRT = 25; POW = 26; DIST = 27; ECU = 28; SIN = 29; CSC = 30; COS = 31; COT = 32; TAN = 33; SEC = 34; VERF=40;
 	
 	numproc=0;
 	MemGlobal.mint = 1000;
@@ -1198,7 +1197,7 @@ eqOp<int &op> = (. op = -1; .) '=' (. op = equ;.) .
 //ASIGNACION
 asignacion = (.int op; wchar_t* name; .)  Ident<name> (.
 	asact = st.buscaVariable(numproc, name);
-	cout << " tu as dir es " << asact <<endl;
+	//cout << " tu as dir es " << asact <<endl;
 	POperandos.push(asact);
 	PTipos.push(st.temptipo);
 
@@ -1280,7 +1279,7 @@ mulOp<int &op> = (. op = -1; .) ( '*' (. op = times; .) | '/' (. op = slash; .) 
 
 factor = (. wchar_t* name; .)  ( Ident<name> (.
 	diract = st.buscaVariable(numproc, name);
-	cout << " tu factor dir es " << diract <<endl;
+	//cout << " tu dir es " << diract <<endl;
 	POperandos.push(diract);
 	PTipos.push(st.temptipo);
 
@@ -1512,11 +1511,13 @@ ciclowhile = "while" (.
 	buildCuadrupleWhile();
 .).
 //Acciones para generar cuadruplos de FOR
-ciclofor = (. wchar_t* name; .)  "for" '(' asignacion expresion ';'(.
+ciclofor = (. wchar_t* name; .)  "for" '(' asignacion expresion(.
 	buildCuadrupleFOR();
+	tempfor=asact;
+	cout << "TemporalFOR " << tempfor << endl;
 .) ')' bloque (.
 //cout << "salio bloque" << endl;
-	buildCuadrupleM(0,asact,1,asact);
+	buildCuadrupleM(ADD,tempfor,1,tempfor);
 	int retorno = PSaltos.top();
 	PSaltos.pop();
 	buildCuadrupleM(GOTO,-1,-1,retorno);
