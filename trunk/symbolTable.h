@@ -321,6 +321,13 @@ list<tablaArr>::iterator p;
 	}
 return b;
 }
+//funcion que regresa la direccion virtual del procedimiento.
+int checaFuncion(int a){
+int b;
+
+b= hmap[a].dirV;
+return b;
+}
 
 // funcion que regresa el num de dimensiones de una variable dimensionada
 int getDim(int a){

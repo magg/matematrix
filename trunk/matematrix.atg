@@ -985,7 +985,10 @@ else if (dimactual > 1) {
 
 estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | asignacion | returnF ).
 returnF = "return" '(' exp ')' (.
-	buildCuadrupleM(RETURN,POperandos.top(),-1,-1);
+int res;
+res= st.checaFuncion(numproc);
+buildCuadrupleM(RETURN,-1, POperandos.top(),res);
+
 .) ';'.
 //llamadas = '(' (  funciones  | otras ) ')' .
 //otras = Ident<name> [index] ( asignacion | aesp ).
@@ -1084,7 +1087,6 @@ varns = (. wchar_t* name;int type; .)  tipo<type> Ident<name> (.
 	}
 
 }
-//PDimensiones.push(-1);
 .) ['['(.
 numdim=0;
 	R = 1;
@@ -1320,6 +1322,26 @@ funcT = (. wchar_t* name;int type; .)  tipo<type> (. tipo_proc = type; .) Ident<
 			MemLoc.mint = st.newDirProc(numproc, tipo_proc, name, MemLoc.mint);
 		}
 	}
+switch(type) {
+			case 0:
+				MemGlobal.mint = st.newTablaVar(numproc, type, name, MemGlobal.mint);
+			break;
+			case 1:
+				MemGlobal.mfloat = st.newTablaVar(numproc, type, name, MemGlobal.mfloat);
+			break;
+			case 2:
+				MemGlobal.mstring = st.newTablaVar(numproc, type, name, MemGlobal.mstring);
+			break;
+			case 3:
+				MemGlobal.mboolean = st.newTablaVar(numproc, type, name, MemGlobal.mboolean);
+			break;
+			case 4:
+				MemGlobal.mcomplex = st.newTablaVar(numproc, type, name, MemGlobal.mcomplex);
+			break;
+			default:
+				MemGlobal.mint = st.newTablaVar(numproc, type, name, MemGlobal.mint);
+		}
+
 
 .).
 
