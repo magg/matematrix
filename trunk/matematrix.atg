@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <stack>
+#include <string>
 #include <wchar.h>
 #include "symbolTable.h"
 #include <tr1/unordered_map>
@@ -65,6 +66,7 @@ stack<int> POperadores;
 stack<int> POperandos;
 stack<int> PSaltos;
 stack<int> PDimensiones;
+stack<wchar_t*>PFunciones;
 
 // struct de cuadruplos 
 typedef struct {
@@ -181,6 +183,35 @@ return 0;
 
 int buildCruadruple2(int op){
 	int uno, dos, id1, id2, res;
+	//dos = PTipos.top();
+	//PTipos.pop();
+	//uno = PTipos.top();
+	//PTipos.pop();
+
+	//if( semantico(uno, dos, op) != 5 ) {	
+	id2 = POperandos.top();
+		POperandos.pop();
+		id1 = -1;
+		res = POperandos.top();
+		POperandos.pop();
+		cuadruplos x;
+		x.op = op;
+		x.opdo1 = id1;
+		x.opdo2 = id2;
+		x.res = res;
+		hasht[cont_cuadruple] = x;
+		cont_cuadruple++;
+		POperadores.pop();
+//	} else {
+//		cout << "Semantic error: Type mismatch" << endl;
+
+//	}
+return 0;
+}
+
+/*
+int buildCuadrupleR(int op, int a, int op2, int res){
+	int uno, dos, id1, id2, res;
 	dos = PTipos.top();
 	PTipos.pop();
 	uno = PTipos.top();
@@ -206,7 +237,7 @@ int buildCruadruple2(int op){
 	}
 return 0;
 }
-
+*/
 int buildCuadruple3(){
 int res, aux;	
 aux = PTipos.top();
@@ -877,7 +908,7 @@ var_cte (.int n1;float m1;bool b1;wchar_t *s1;.) = ( number (.
 .)  | flotante (. 
 	swscanf(t->val, L"%f", &m1); 
 	ct.tempconst = MemConst.mfloat;
-	cout << m1 << endl;
+	//cout << m1 << endl;
 	MemConst.mfloat = ct.insertaFloat(MemConst.mfloat,12000, m1);
 	ct.constTipo = 1;
 	contf++;
@@ -986,22 +1017,30 @@ else if (dimactual > 1) {
 estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | asignacion | returnF ).
 returnF = "return" '(' exp ')' (.
 int res;
-res= st.checaFuncion(numproc);
+wchar_t* a;
+cout << "HERE " << POperandos.top() << endl;
+a = PFunciones.top();
+res= st.buscaVariable(numproc,a);
 buildCuadrupleM(RETURN,-1, POperandos.top(),res);
-
+PFunciones.pop();
 .) ';'.
 //llamadas = '(' (  funciones  | otras ) ')' .
 //otras = Ident<name> [index] ( asignacion | aesp ).
 //aesp = ("++" | "--" | "+=" expresion | "-=" expresion ).
 //llamadaFuncU = (. wchar_t* name; .)  Ident<name> '(' exp { ',' exp } ')' ';'.	
-funciones = '<' ( funcN | funcE ) '>' ';'.
+funciones = '<' ( funcN | funcE ) '>'.
 
 funcN = (. wchar_t* name; .)  Ident<name> (.
- 		if ( st.checaDirProc2(name)) {
+int a;
+a = st.buscaVariable (0,name);
+POperandos.push(a);
+cout << POperandos.top() << endl;
+		if ( st.checaDirProc2(name)) {
  			st.tempnumproc = st.checaDirProc3(name);
  		}
  .)'(' (.
  		buildCuadrupleM(ERA,-1,-1,-1);
+cout << "Hace cuadruplo era" << endl;
  		k=1;
  .) expresion (.
  		arg = POperandos.top();
@@ -1019,6 +1058,7 @@ funcN = (. wchar_t* name; .)  Ident<name> (.
  		POperandos.pop();
  		tipoarg = PTipos.top();
  		PTipos.pop();
+		int tempk;
  		st.temptipop = st.verificaParametro(st.tempnumproc, k);
  		if( st.temptipop == tipoarg && st.temptipop != -1 ) {
 			tempk =  st.returnParamK(st.tempnumproc, k);
@@ -1028,6 +1068,7 @@ funcN = (. wchar_t* name; .)  Ident<name> (.
 			int tempnp;
 			tempnp = st.buscaDirInicio(st.tempnumproc);
  			buildCuadrupleM(GOSUB,tempnp,-1,-1);
+cout << "sale de funciones" << endl;
 .).
 
 funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
@@ -1097,8 +1138,8 @@ numdim=0;
 	swscanf(t->val, L"%d", &n1);
 	if (n1 < 1) {
 		(L"La constante debe ser mayor que 0.");
-	} else { 
-		st.newTablaDesc(numproc,0,n1-1,-1,st.tempnumarr);
+	} else { 	
+st.newTablaDesc(numproc,0,n1-1,-1,st.tempnumarr);
 		//st.almacenaConsArr(st.tempnumarr,numdim,n1-1);
 		R = n1* R;	
 		PDimensiones.push(n1);
@@ -1190,10 +1231,11 @@ asignacion = (.int op; wchar_t* name; .)  Ident<name> (.
 
 .) [ index ] eqOp<op> (.
 	POperadores.push(op);
-.) expresion (.
+.) expresion (. cout << POperadores.top() << endl;	
 	if ( !POperadores.empty() ) {
 		if ( POperadores.top() == equ){
 			buildCruadruple2(POperadores.top());
+cout << "hace cuadruplo asignacion" << endl;	
 		}
 	}
 .) ';'.
@@ -1300,7 +1342,7 @@ funcV = (. wchar_t* name;int type; .) "void" (. tipo_proc=-1 ; .) Ident<name>  (
 .).
 
 funcT = (. wchar_t* name;int type; .)  tipo<type> (. tipo_proc = type; .) Ident<name>  (.
-
+PFunciones.push(name);
 	if( st.checaDirProc(numproc, tipo_proc, name) ){
 		switch(type){
 			case 0:
@@ -1324,22 +1366,22 @@ funcT = (. wchar_t* name;int type; .)  tipo<type> (. tipo_proc = type; .) Ident<
 	}
 switch(type) {
 			case 0:
-				MemGlobal.mint = st.newTablaVar(numproc, type, name, MemGlobal.mint);
+				MemGlobal.mint = st.newTablaVar(0, type, name, MemGlobal.mint);
 			break;
 			case 1:
-				MemGlobal.mfloat = st.newTablaVar(numproc, type, name, MemGlobal.mfloat);
+				MemGlobal.mfloat = st.newTablaVar(0, type, name, MemGlobal.mfloat);
 			break;
 			case 2:
-				MemGlobal.mstring = st.newTablaVar(numproc, type, name, MemGlobal.mstring);
+				MemGlobal.mstring = st.newTablaVar(0, type, name, MemGlobal.mstring);
 			break;
 			case 3:
-				MemGlobal.mboolean = st.newTablaVar(numproc, type, name, MemGlobal.mboolean);
+				MemGlobal.mboolean = st.newTablaVar(0, type, name, MemGlobal.mboolean);
 			break;
 			case 4:
-				MemGlobal.mcomplex = st.newTablaVar(numproc, type, name, MemGlobal.mcomplex);
+				MemGlobal.mcomplex = st.newTablaVar(0, type, name, MemGlobal.mcomplex);
 			break;
 			default:
-				MemGlobal.mint = st.newTablaVar(numproc, type, name, MemGlobal.mint);
+				MemGlobal.mint = st.newTablaVar(0, type, name, MemGlobal.mint);
 		}
 
 
@@ -1394,6 +1436,7 @@ if( st.checaTablaParam(numproc, type, name) ){
 			MemLoc.mint = st.newTablaParam(numproc, type, name, MemLoc.mint);
 	}
 }
+
 
 }
 
@@ -1562,11 +1605,8 @@ escritura = "print" '(' exp (.
 .) } ')'  ';'.
 
 //Acciones para generar cuadruplos de de escritura (READ)
-lectura = (. wchar_t* name; .)  "read" '(' Ident<name> ')' (.
-	if ( st.checaDirProc2(name)) {
-		st.tempnumproc = st.checaDirProc3(name);
-	}	
-	int idread = st.buscaVariable(st.tempnumproc, name);
+lectura = (. wchar_t* name; .)  "read" '(' Ident<name> ')' (.	
+	int idread = st.buscaVariable(numproc, name);
 	cout << " id de read: " << idread <<endl;
 	POperandos.push(idread);
 
