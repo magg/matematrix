@@ -251,7 +251,8 @@ int returnParamK(int a, int k){
 			int dir=0;	
 			for (q=hmap[a].param.begin(); q!=hmap[a].param.end(); q++) {	
 				if ( i == k ) {
-					dir = q->dirV;				
+					dir = q->dirV;	
+					break;			
 				} else {
 					i++;
 				}
@@ -274,6 +275,7 @@ void agregaDim(int a,int llave, wchar_t* name){
 	for (p=hmap[a].vars.begin(); p!=hmap[a].vars.end(); p++) {	
 		if ( wcscmp(p->name, name) == 0 ) {
 			p->key = llave;
+			break;
 		} 
 	}
 
@@ -365,6 +367,7 @@ int i = 1;
 for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
 		if (i == m){ 
 			k = p->lsup;
+			break;
 		}
 	i++;
 	}
@@ -382,6 +385,7 @@ for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
 		if (i == m){ 
 
 			k = p->m;
+			break;
 		} 
 	i++;
 	}
@@ -398,6 +402,7 @@ int i = 1;
 for (p=hdim[a].dim.begin(); p!=hdim[a].dim.end(); p++) {
 		if (i == m){
 			p->m = k;
+			break;
 		} else {
 			i++;
 		}
@@ -440,6 +445,7 @@ bool b = false;
 		for (p=hmap[a].vars.begin(); p!=hmap[a].vars.end(); p++) {	
 				if ( wcscmp(p->name, nombre) != 0 ) {
 					b = true;
+					break;
 				} 
 		}
 	}
@@ -494,7 +500,8 @@ bool b = false;
 		list<tablaParam>::iterator  q;
 		for (q=hmap[a].param.begin(); q!=hmap[a].param.end(); q++) {	
 				if ( wcscmp(q->name, nombre) != 0 ) {
-					b = true;
+					b = true;	
+					break;
 				} 
 		}
 	}
@@ -527,7 +534,8 @@ bool b = false;
 
 	for(unordered_map<int, dirProc>::iterator it = hmap.begin(); it != hmap.end(); it ++){
 		if( wcscmp((*it).second.name, nombre) !=0 ){
-			b = true;		
+			b = true;	
+			break;	
 		}
 	}
 
@@ -541,7 +549,8 @@ bool b = false;
 
 	for(unordered_map<int, dirProc>::iterator it = hmap.begin(); it != hmap.end(); it ++){
 		if( wcscmp((*it).second.name, nombre) == 0 ){
-			b = true;		
+			b = true;
+			break;		
 		}
 	}
 
@@ -553,7 +562,8 @@ int checaDirProc3(wchar_t* nombre){
 
 	for(unordered_map<int, dirProc>::iterator it = hmap.begin(); it != hmap.end(); it ++){
 		if( wcscmp((*it).second.name, nombre) == 0 ){
-			tempnumproc = (*it).first;		
+			tempnumproc = (*it).first;	
+			break;		
 		}
 	}
 
@@ -571,6 +581,7 @@ int cont=1;
 			if (k == cont){
 				t = q->tipo;
 				b = true;
+				break;
 			} else {
 				cont++;			
 			} 
@@ -596,6 +607,7 @@ int b = 0;
 			temptipo = p->tipo;
 			tempdir = p->dirV;
 			tempdim = p->key;
+			break;
 		} 
 	}
 
@@ -608,7 +620,8 @@ if (b == 0){
 					//cout << "entro al if dentro del for 2" << endl;
 					temptipo = q->tipo;
 					tempdir = q->dirV;
-					b = 1;					
+					b = 1;	
+					break;				
 				}  
 
 			}
@@ -621,7 +634,8 @@ if (b == 0){
 					//cout << "entro al if dentro del for 3" << endl;
 					temptipo = p->tipo;
 					tempdir = p->dirV;
-					tempdim = p->key;					
+					tempdim = p->key;
+					break;					
 				} 
 	}
 
