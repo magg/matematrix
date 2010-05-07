@@ -619,6 +619,68 @@ class virtualMachine(object):
 		if b >= 23000 and b < 24000:
 			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
 	
+	def memReturn(self, b, s):
+		if b >= 1000 and b < 2000:
+			y = self.memGlobal.getInt(b-self.memGlobal.mint)
+			self.memAdd(s,y)
+		if b >= 2000 and b < 3000:
+			y = self.memGlobal.getFloat(b-self.memGlobal.mfloat)
+			self.memAdd(s,y)
+		if b >= 3000 and b < 4000:
+			y = self.memGlobal.getString(b-self.memGlobal.mstring)
+			self.memAdd(s,y)
+		if b >= 4000 and b < 5000:
+			y = self.memGlobal.getBoolean(b-self.memGlobal.mboolean)
+			self.memAdd(s,y)
+		if b >= 6000 and b < 7000:
+			y = self.memTemp.getInt(b-self.memTemp.mint)
+			self.memAdd(s,y)
+		if b >= 7000 and b < 8000:
+			y = self.memTemp.getFloat(b-self.memTemp.mfloat)
+			self.memAdd(s,y)
+		if b >= 8000 and b < 9000:
+			y = self.memTemp.getString(b-self.memTemp.mstring)
+			self.memAdd(s,y)
+		if b >= 9000 and b < 10000:
+			y = self.memTemp.getBoolean(b-self.memTemp.mboolean)
+			self.memAdd(s,y)
+		if b >= 11000 and b < 12000:
+			y = self.memConst.getInt(b-self.memConst.mint)
+			self.memAdd(s,y)
+		if b >= 12000 and b < 13000:
+			y = self.memConst.getFloat(b-self.memConst.mfloat)
+			self.memAdd(s,y)
+		if b >= 13000 and b < 14000:
+			y = self.memConst.getString(b-self.memConst.mstring)
+			self.memAdd(s,y)
+		if b >= 14000 and b < 15000:
+			y = self.memConst.getBoolean(b-self.memConst.mboolean)
+			self.memAdd(s,y)
+		if b >= 20000 and b < 21000:
+			y = self.memLoc.getInt(b-self.memLoc.mint)
+			self.memAdd(s,y)
+		if b >= 21000 and b < 22000:
+			y = self.memLoc.getFloat(b-self.memLoc.mfloat)
+			self.memAdd(s,y)
+		if b >= 22000 and b < 23000:
+			y = self.memLoc.getString(b-self.memLoc.mstring)
+			self.memAdd(s,y)
+		if b >= 23000 and b < 24000:
+			y = self.memLoc.getBoolean(b-self.memLoc.mboolean)
+			self.memAdd(s,y)
+		if b >= 26000 and b < 27000:
+			y = self.memPoint.getInt(b-self.memPoint.mint)
+			self.memAdd(s,y)
+		if b >= 27000 and b < 28000:
+			y = self.memPoint.getFloat(b-self.memPoint.mfloat)
+			self.memAdd(s,y)
+		if b >= 28000 and b < 29000:
+			y = self.memPoint.getString(b-self.memPoint.mstring)
+			self.memAdd(s,y)
+		if b >= 29000 and b < 30000:
+			y = self.memPoint.getBoolean(b-self.memPoint.mboolean)
+			self.memAdd(s,y)
+
 	# el siguiente bloque de funciones son los casos para todos operadores del switch			
 	def suma(self, opdo1, opdo2, res):
 		self.cuadruplo+=1
@@ -731,7 +793,8 @@ class virtualMachine(object):
 		self.memPrint(opdo1)
 
 	def returnf(self, opdo1, opdo2, res):
-		print "returnf"
+		self.cuadruplo+=1
+		self.memReturn(opdo2,res)
 
 	def era(self, opdo1, opdo2, res):
 		self.cuadruplo+=1
