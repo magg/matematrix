@@ -1022,7 +1022,7 @@ cout << "HERE " << POperandos.top() << endl;
 a = PFunciones.top();
 res= st.buscaVariable(numproc,a);
 buildCuadrupleM(RETURN,-1, POperandos.top(),res);
-PFunciones.pop();
+//PFunciones.pop();
 .) ';'.
 //llamadas = '(' (  funciones  | otras ) ')' .
 //otras = Ident<name> [index] ( asignacion | aesp ).
@@ -1037,6 +1037,7 @@ POperandos.push(a);
 cout << POperandos.top() << endl;
 		if ( st.checaDirProc2(name)) {
  			st.tempnumproc = st.checaDirProc3(name);
+cout << "numproc en funcN " << st.tempnumproc << endl;
  		}
  .)'(' (.
  		buildCuadrupleM(ERA,-1,-1,-1);
@@ -1066,8 +1067,10 @@ cout << "Hace cuadruplo era" << endl;
  		}
  .) } ')' (.
 			int tempnp;
+cout << "numproc " << st.tempnumproc << endl; 	
 			tempnp = st.buscaDirInicio(st.tempnumproc);
- 			buildCuadrupleM(GOSUB,tempnp,-1,-1);
+cout << "numproc " << tempnp << endl; 	
+		buildCuadrupleM(GOSUB,tempnp,-1,-1);
 cout << "sale de funciones" << endl;
 .).
 

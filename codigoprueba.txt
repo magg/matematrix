@@ -1,16 +1,20 @@
+
 program test;
 var 
-int a[8];
-int b;
+int fact;
 int i;
-float c;
+int n;
 end
 
+def int factorial(int n){
+	if(n<=1){
+		return(1);	
+	}else{
+		return(n*<factorial(n-1)>);	
+	}
+}
+
 main {
-b=10;
-for(i=0;i<b) {
-print(i);
+print(<factorial(4)>);
 
-}
-
-}
+}	

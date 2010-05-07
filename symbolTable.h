@@ -265,6 +265,8 @@ return dir;
 //funcion que regresa la dirI
 int buscaDirInicio(int a){
 
+cout << "a" << a << endl;
+cout << "hmap " << hmap[a].dirI << endl;
 return hmap[a].dirI;
 }
 
@@ -563,7 +565,7 @@ int checaDirProc3(wchar_t* nombre){
 	for(unordered_map<int, dirProc>::iterator it = hmap.begin(); it != hmap.end(); it ++){
 		if( wcscmp((*it).second.name, nombre) == 0 ){
 			tempnumproc = (*it).first;	
-			break;		
+			break;	
 		}
 	}
 
