@@ -48,19 +48,19 @@ class virtualMachine(object):
 		self.PExe = []
 		self.PCuadruplo = []
 		self.cuadruplo = 0
-		f = open('/home/some/Escritorio/actual/cuadruplos.matrix', 'r')
+		f = open('/home/some/Escritorio/nuevo/cuadruplos.matrix', 'r')
 		line = f.readlines()
 		f.close()
-		ci = open('/home/some/Escritorio/actual/int.cte', 'r')
+		ci = open('/home/some/Escritorio/nuevo/int.cte', 'r')
 		line1 = ci.readlines()
 		ci.close()
-		cf = open('/home/some/Escritorio/actual/float.cte', 'r')
+		cf = open('/home/some/Escritorio/nuevo/float.cte', 'r')
 		line2 = cf.readlines()
 		cf.close()
-		cb = open('/home/some/Escritorio/actual/bool.cte', 'r')
+		cb = open('/home/some/Escritorio/nuevo/bool.cte', 'r')
 		line3 = cb.readlines()
 		cb.close()
-		cs = open('/home/some/Escritorio/actual/str.cte', 'r')
+		cs = open('/home/some/Escritorio/nuevo/str.cte', 'r')
 		line4 = cs.readlines()
 		cs.close()
 		for foo1 in line1:
@@ -205,16 +205,16 @@ class virtualMachine(object):
 			t1 = 3
 		if a >= 26000 and a < 27000:
 			x = self.memPoint.getInt(a-self.memPoint.mint)
-			t1 = 0
+			x = self.memArr(x)
 		if a >= 27000 and a < 28000:
 			x = self.memPoint.getFloat(a-self.memPoint.mfloat)
-			t1 = 1
+			x = self.memArr(x)
 		if a >= 28000 and a < 29000:
 			x = self.memPoint.getString(a-self.memPoint.mstring)
-			t1 = 2
+			x = self.memArr(x)
 		if a >= 29000 and a < 30000:
 			x = self.memPoint.getBoolean(a-self.memPoint.mboolean)
-			t1 = 3
+			x = self.memArr(x)
 		if b >= 1000 and b < 2000:
 			y = self.memGlobal.getInt(b-self.memGlobal.mint)
 			t2 = 0
@@ -265,16 +265,16 @@ class virtualMachine(object):
 			t2 = 3
 		if b >= 26000 and b < 27000:
 			y = self.memPoint.getInt(b-self.memPoint.mint)
-			t1 = 0
+			y = self.memArr(y)
 		if b >= 27000 and b < 28000:
 			y = self.memPoint.getFloat(b-self.memPoint.mfloat)
-			t1 = 1
+			y = self.memArr(y)
 		if b >= 28000 and b < 29000:
 			y = self.memPoint.getString(b-self.memPoint.mstring)
-			t1 = 2
+			y = self.memArr(y)
 		if b >= 29000 and b < 30000:
 			y = self.memPoint.getBoolean(b-self.memPoint.mboolean)
-			t1 = 3
+			y = self.memArr(y)
 		return (x,y)
 
 	#funcion que guarda un valor en la lista de memoria dependiendo del rango de la memoria
@@ -337,7 +337,7 @@ class virtualMachine(object):
 			self.memAdd2(s,y)
 		if b >= 6000 and b < 7000:
 			y = self.memTemp.getInt(b-self.memTemp.mint)
-			self.memAdd(s,y)
+			self.memAdd2(s,y)
 		if b >= 7000 and b < 8000:
 			y = self.memTemp.getFloat(b-self.memTemp.mfloat)
 			self.memAdd2(s,y)
@@ -491,7 +491,7 @@ class virtualMachine(object):
 			y = self.memPoint.getBoolean(b-self.memPoint.mboolean)
 			self.memPrint(y)
 	
-	# funcion que se usa para lleer de pantalla
+	# funcion que se usa para leeer de pantalla
 	def memRead(self,a,s):
 		if a >= 1000 and a < 2000:
 			ss = int(s)
@@ -732,6 +732,8 @@ class virtualMachine(object):
 		self.cuadruplo+=1
 		(a,b) = self.memSearch(opdo1,opdo2)	
 		s = a + b
+		#print "la suma de ",a,b
+		#print "es", s
 		self.memAdd(res, s)
 
 	def resta(self, opdo1, opdo2, res):
