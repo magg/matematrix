@@ -1,20 +1,21 @@
-
 program test;
 var 
 int fact;
-int i;
 int n;
+int a;
+int c;
 end
 
+def void funcion1(int c){
+print(c);
+}
+
 def int factorial(int n){
-	if(n<=1){
-		return(1);	
-	}else{
-		return(n*<factorial(n-1)>);	
-	}
+a=4;
+|funcion1(3)|
+return(a);
 }
 
 main {
-print(<factorial(4)>);
-
-}	
+print(|factorial(2)|);
+}

@@ -49,7 +49,7 @@ int // opcodes
 	  ADD,  SUB,   MUL,   DIV,   EQU,  LSS, GTR, DIFF,
 	  GTREQ, LSSEQ, EQEQ, ANDOP, OROP, RET, PRINT, RETURN,
 	  GOTO, GOTOF, GOTOV, GOSUB, READ, ERA, PARAM, END,
-	  PM, SQRT, POW, DIST, ECU, SIN, CSC, COS, COT, TAN, SEC,VERF;
+	  PM, SQRT, POW, DIST, ECU, SIN, CSC, COS, COT, TAN, SEC,VERF,E,LOG,LN;
 
 
 //varibles temporales
@@ -190,8 +190,10 @@ int buildCruadruple2(int op){
 
 	//if( semantico(uno, dos, op) != 5 ) {	
 	id2 = POperandos.top();
-		POperandos.pop();
+cout << POperandos.top() << endl;	
+	POperandos.pop();
 		id1 = -1;
+cout << POperandos.top() << endl;
 		res = POperandos.top();
 		POperandos.pop();
 		cuadruplos x;
@@ -487,12 +489,18 @@ void buildCuadruplePM(){
 	POperandos.pop();
 
 	buildCuadrupleM(0,x1,x2,t1);
-	buildCuadrupleM(3,t1,2,t2);
+	ct.tempconst = MemConst.mint;
+	MemConst.mint = ct.insertaInt(MemConst.mint,11000,2);
+	conti++;
+	buildCuadrupleM(3,t1,ct.tempconst,t2);
 	buildCuadrupleM(0,y1,y2,t3);
-	buildCuadrupleM(3,t3,2,t4);
+	ct.tempconst = MemConst.mint;
+	MemConst.mint = ct.insertaInt(MemConst.mint,11000,2);
+	conti++;
+	buildCuadrupleM(3,t3,ct.tempconst,t4);
 	buildCuadrupleM(24,t2,t4,-1);	
 }
-//Genera cuadruplos para el punto medio.
+//Genera cuadruplos para distancia entre dos puntos.
 void buildCuadrupleDosP(){
 	int t1,t2,t3,t4,t5,t6;
 	int tipo = PTipos.top();
@@ -585,9 +593,15 @@ void buildCuadrupleDosP(){
 	POperandos.pop();
 
 	buildCuadrupleM(1,x2,x1,t1);
-	buildCuadrupleM(POW,t1,2,t2);
+	ct.tempconst = MemConst.mint;
+	MemConst.mint = ct.insertaInt(MemConst.mint,11000,2);
+	conti++;
+	buildCuadrupleM(POW,t1,ct.tempconst,t2);
 	buildCuadrupleM(1,y2,y1,t3);
-	buildCuadrupleM(POW,t3,2,t4);
+	ct.tempconst = MemConst.mint;
+	MemConst.mint = ct.insertaInt(MemConst.mint,11000,2);
+	conti++;
+	buildCuadrupleM(POW,t3,ct.tempconst,t4);
 	buildCuadrupleM(0,t2,t4,t5);
 	buildCuadrupleM(SQRT,t5,-1,t6);
 	buildCuadrupleM(DIST,t6,-1,-1);	
@@ -697,9 +711,7 @@ cuadruplos x;
 	x.opdo2 = c;
 	x.res = temp ;
 	hasht[cont_cuadruple] = x;
-
 	POperandos.push(temp);
-cout << "Temporal en la primera dimension pila " << POperandos.top() << endl;
 	cont_cuadruple++;
 }
 
@@ -803,7 +815,7 @@ void InitDeclarations() { // it must exist
 	// opcodes
 	ADD  =  0; SUB   =  1; MUL   =  2; DIV   =  3; DIFF   =  4; GTR = 5; LSS = 6;
 	GTREQ = 7; LSSEQ =8; EQEQ =9; ANDOP =10; OROP = 11; EQU = 12; RET = 13; GOTOV = 14;
-	GOTOF = 15; GOTO = 16; PARAM= 17; PRINT = 18; RETURN =19; ERA = 20; GOSUB = 21; READ = 22; END = 23; PM = 24; SQRT = 25; POW = 26; DIST = 27; ECU = 28; SIN = 29; CSC = 30; COS = 31; COT = 32; TAN = 33; SEC = 34; VERF=40;
+	GOTOF = 15; GOTO = 16; PARAM= 17; PRINT = 18; RETURN =19; ERA = 20; GOSUB = 21; READ = 22; END = 23; PM = 24; SQRT = 25; POW = 26; DIST = 27; ECU = 28; SIN = 29; CSC = 30; COS = 31; COT = 32; TAN = 33; SEC = 34; E = 35; LOG = 36; LN = 37; VERF=40;
 	
 	numproc=0;
 	MemGlobal.mint = 1000;
@@ -961,7 +973,10 @@ index = '[' (.
 		cout << "True if arreglo dim 1" << endl;
 		aux=POperandos.top();	
 		M=st.dameM(templlave,dimactual);
-		buildCuadrupleA(MUL, aux, M);
+		ct.tempconst = MemConst.mint;
+		MemConst.mint = ct.insertaInt(MemConst.mint,11000,M);
+		conti++;
+		buildCuadrupleA(MUL, aux, ct.tempconst);
 
 /*
 else if (dimactual > 1) {
@@ -972,9 +987,12 @@ else if (dimactual > 1) {
 */
 } else {
 	aux1=POperandos.top(); POperandos.pop();
-	buildCuadrupleA(ADD, aux1, 0);
+	//buildCuadrupleA(ADD, aux1, 0);
 	base=tempbase;
-	buildCuadrupleP(ADD,POperandos.top(),base);
+	ct.tempconst = MemConst.mint;
+	MemConst.mint = ct.insertaInt(MemConst.mint,11000,base);
+	conti++;
+	buildCuadrupleP(ADD,aux1,ct.tempconst);
 	POperadores.pop();
 	PDimensiones.pop();
 }
@@ -997,17 +1015,23 @@ else if (dimactual > 1) {
 	if (dimactual < st.tempdimfinal){ 
 	cout << "+1 dimension if checanulo " << endl;
 	aux=POperandos.top();
-	M=st.dameM(templlave,dimactual);
-	buildCuadrupleA(MUL, aux, M);
+	M=st.dameM(templlave,dimactual);	
+	ct.tempconst = MemConst.mint;
+	MemConst.mint = ct.insertaInt(MemConst.mint,11000,M);
+	conti++;
+	buildCuadrupleA(MUL, aux, ct.tempconst);
 } else if (dimactual > 1) {
 	cout << "entro a dimactual mayor a 1" << endl;
 	aux2=POperandos.top();POperandos.pop();
 	aux1=POperandos.top();POperandos.pop();
 	buildCuadrupleA(ADD, aux1, aux2);
 		aux1=POperandos.top(); POperandos.pop();
-		buildCuadrupleA(ADD, aux1, 0);
+		//buildCuadrupleA(ADD, aux1, 0);
 		base=tempbase;
-		buildCuadrupleP(ADD,POperandos.top(),base);
+		ct.tempconst = MemConst.mint;
+		MemConst.mint = ct.insertaInt(MemConst.mint,11000,base);
+		conti++;
+		buildCuadrupleP(ADD,aux1,ct.tempconst);
 		POperadores.pop();
 		PDimensiones.pop();
 }
@@ -1018,7 +1042,6 @@ estatuto = ( condicion | escritura | lectura | ciclo | funciones | variables | a
 returnF = "return" '(' exp ')' (.
 int res;
 wchar_t* a;
-cout << "HERE " << POperandos.top() << endl;
 a = PFunciones.top();
 res= st.buscaVariable(numproc,a);
 buildCuadrupleM(RETURN,-1, POperandos.top(),res);
@@ -1028,7 +1051,7 @@ buildCuadrupleM(RETURN,-1, POperandos.top(),res);
 //otras = Ident<name> [index] ( asignacion | aesp ).
 //aesp = ("++" | "--" | "+=" expresion | "-=" expresion ).
 //llamadaFuncU = (. wchar_t* name; .)  Ident<name> '(' exp { ',' exp } ')' ';'.	
-funciones = '<' ( funcN | funcE ) '>'.
+funciones = '|' ( funcN | funcE ) '|'.
 
 funcN = (. wchar_t* name; .)  Ident<name> (.
 int a;
@@ -1040,10 +1063,11 @@ cout << POperandos.top() << endl;
 cout << "numproc en funcN " << st.tempnumproc << endl;
  		}
  .)'(' (.
+POperadores.push(-9999);
  		buildCuadrupleM(ERA,-1,-1,-1);
 cout << "Hace cuadruplo era" << endl;
  		k=1;
- .) expresion (.
+ .) exp (.
  		arg = POperandos.top();
  		POperandos.pop();
  		tipoarg = PTipos.top();
@@ -1066,16 +1090,19 @@ cout << "Hace cuadruplo era" << endl;
  			buildCuadrupleM(PARAM,arg,-1,tempk);
  		}
  .) } ')' (.
-			int tempnp;
-cout << "numproc " << st.tempnumproc << endl; 	
-			tempnp = st.buscaDirInicio(st.tempnumproc);
-cout << "numproc " << tempnp << endl; 	
-		buildCuadrupleM(GOSUB,tempnp,-1,-1);
+int tempnp;
+if( POperadores.top() == -9999) {
+		POperadores.pop(); 
+} else {
+	cout << "error" << endl;
+	}
+tempnp = st.buscaDirInicio(st.tempnumproc);
+buildCuadrupleM(GOSUB,tempnp,-1,-1);
 cout << "sale de funciones" << endl;
 .).
 
-funcE = ( fAlgebra | fMatrix | fGraph | fVector | fTrigonom | log ).
-llamadaFuncE = (fTrigonom | log).
+funcE = ( fAlgebra | fMatrix | fGraph | fVector | (.cout <<"Entro a llamadafuncE" << endl;.)llamadaFuncE ).
+//llamadaFuncE = (fTrigonom | log).
 variables = "var" ( vares | varns ) { ( vares | varns ) } "end".
 vares = ( vector | matriz ).
 matriz = (. wchar_t* name;int type; .)  "matrix" tipo<type> Ident<name> '['expresion ',' expresion ']' '=' '(' '[' expresion { ',' expresion } ']' { ',' '[' expresion { ',' expresion } ']' } ')' ';'.
@@ -1234,7 +1261,7 @@ asignacion = (.int op; wchar_t* name; .)  Ident<name> (.
 
 .) [ index ] eqOp<op> (.
 	POperadores.push(op);
-.) expresion (. cout << POperadores.top() << endl;	
+.) exp (. 
 	if ( !POperadores.empty() ) {
 		if ( POperadores.top() == equ){
 			buildCruadruple2(POperadores.top());
@@ -1316,7 +1343,13 @@ factor = (. wchar_t* name; .)  ( Ident<name> (.
 	PTipos.push(st.temptipo);
 
 .)
-[ ( index  | '(' expresion ')' ) ]| llamadaFuncE | funciones | var_cte (.
+[ ( index  | '('  (. POperadores.push(-9999); .) expresion ')' (. 
+	if( POperadores.top() == -9999) {
+		POperadores.pop(); 
+	} else {
+	cout << "error" << endl;
+	}
+.) ) ]| funciones | var_cte (.
 
 	POperandos.push(ct.tempconst);
 	PTipos.push(ct.constTipo);
@@ -1514,15 +1547,25 @@ condicion = "if" '(' expresion ')'  (.
 		cout << "Semantic error: Type mismatch" << endl;
 	}
 .)
-bloque ["elif" '(' expresion ')' (. 
+bloque ["elif" '(' (. POperadores.push(-9999); .) expresion ')' (. 
 	int aux;
-	aux=PTipos.top();
+if( POperadores.top() == -9999) {
+		POperadores.pop(); 
+	} else {
+	cout << "error" << endl;
+	}	
+aux=PTipos.top();
 	if (aux == 3){
 		buildCuadruple4(POperandos.top());
 	} else {
 	cout << "Semantic error: Type mismatch" << endl;
 	}
-.) bloque { "elif" '(' expresion ')' bloque } ] [ "else" (. 
+.) bloque { "elif" '(' (. POperadores.push(-9999); .) expresion ')'
+ (. if( POperadores.top() == -9999) {
+		POperadores.pop(); 
+	} else {
+	cout << "error" << endl;
+	} .) bloque } ] [ "else" (. 
 	int salto;
 	buildCuadruple5(GOTO,-1,-1);
 	salto = PSaltos.top();
@@ -1545,8 +1588,13 @@ bloque ] (.
 ciclowhile = "while" (. 
 	//cout << "entro al while" << endl;
 	PSaltos.push(cont_cuadruple); 
-.) '(' expresion ')' (.
-	buildCuadruple3();
+.) '(' (. POperadores.push(-9999); .) expresion ')' (.
+if( POperadores.top() == -9999) {
+		POperadores.pop(); 
+	} else {
+	cout << "error" << endl;
+	}	
+buildCuadruple3();
 .) bloque (. 
 	buildCuadrupleWhile();
 .).
@@ -1591,7 +1639,7 @@ ciclofor = (. wchar_t* name; .)  "for" '(' asignacion expresion(.
 */
 .) .
 //Acciones para generar cuadruplos de de escritura (WRITE)
-escritura = "print" '(' exp (.
+escritura = "print" '(' (. POperadores.push(-9999); .) exp (.
 	//cout << "entro al print" << endl;
 	int resul = POperandos.top();
 	POperandos.pop();
@@ -1605,7 +1653,11 @@ escritura = "print" '(' exp (.
 	cout << "pop : " << resul << endl;
 	buildCuadrupleM(PRINT,resul,-1,-1);
 	cout << "creo cuadruplo print" << endl;
-.) } ')'  ';'.
+.) } ')' (. if( POperadores.top() == -9999) {
+		POperadores.pop(); 
+	} else {
+	cout << "error" << endl;
+	} .) ';'.
 
 //Acciones para generar cuadruplos de de escritura (READ)
 lectura = (. wchar_t* name; .)  "read" '(' Ident<name> ')' (.	
@@ -1643,20 +1695,25 @@ rec_entre_2puntos = "rec_pp" '(' expresion ',' expresion ',' expresion ',' expre
 .)')'.
 
 trigoOp<int &op> = (. op = -1; .)
-( "sin" (. op = SIN; .) | 
+("sin" (. op = SIN; .) | 
 "csc" (. op = CSC; .) | 
 "cos" (. op = COS; .) | 
 "cot" (. op = COT; .) | 
 "tan" (. op = TAN; .) | 
 "sec"  (. op = SEC; .) ). 	
 
+logOp<int &op> = (. op = -1; .) 
+( "E" (. op = E; cout << "operador en E" << endl;.)| 
+"log" (. op = LOG; .)| 
+"ln" (. op = LN; .)).
 fGraph = "graph" '(' exp1 ')'.
-fTrigonom = (.int op;.) trigoOp<op> '(' expresion (.
+
+llamadaFuncE = (.int op;.) ( trigoOp<op> | logOp<op> ) '(' expresion (.
 	int resultado = POperandos.top();
 	POperandos.pop();
-	buildCuadrupleM(op,resultado,-1,-1);
+	buildCuadrupleA(op,resultado,-1);
 .) ')'.
-log = ( 'E' | "log" | "ln" ) '(' expresion ')'.
+
 fAlgebra = ( punto_medio | dist_2puntos | rec_entre_2puntos ).
 fMatrix = ( Sum_M | Inv_M | Mul_M | Trans_M).
 fVector = ( Sum_V | Mul_V | pro_ev ).
